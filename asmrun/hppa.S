@@ -16,8 +16,6 @@
 
 #ifdef SYS_hpux
 #define G(x) x
-#define DEFG(x) x
-#define DEFLABEL(x) x
 #define CODE .code
 #define CODE_ALIGN 4
 #define EXPORT_CODE(x) .export x, entry, priv_lev=3
@@ -30,14 +28,10 @@
 #define LOADHIGHLABEL(x) addil LR%x, %r27
 #define LOWLABEL(x) RR%x
 #define CALL(x) bl x, %r2 ! nop
-#define WORD .word
-#define HALF .half
 #endif
 
 #ifdef SYS_nextstep
 #define G(x) _##x
-#define DEFG(x) _##x:
-#define DEFLABEL(x) x:
 #define CODE .text
 #define CODE_ALIGN 2
 #define EXPORT_CODE(x) .globl x
@@ -54,6 +48,22 @@
 #define HALF .short
 #endif
 
+#ifdef SYS_hpux
+	.space $PRIVATE$
+	.subspa $DATA$,quad=1,align=8,access=31
+	.subspa $BSS$,quad=1,align=8,access=31,zero,sort=82
+	.space $TEXT$
+	.subspa $LIT$,quad=0,align=8,access=44
+	.subspa $CODE$,quad=0,align=8,access=44,code_only
+	.import $global$, data
+        .import $$dyncall, millicode
+	.import garbage_collection, code
+	.import caml_program, code
+	.import mlraise, code
+	.import caml_apply2, code
+	.import caml_apply3, code
+#endif
+
 COMM(G(young_limit), 8)
 COMM(G(young_ptr), 8)
 COMM(G(gc_entry_regs), 32 * 4)
@@ -64,21 +74,12 @@ COMM(G(caml_last_return_address), 8)
 COMM(G(caml_exception_pointer), 8)
 COMM(G(caml_required_size), 8)
 
-#ifdef SYS_hpux
-        .import $$dyncall,millicode
-	.import garbage_collection,code
-	.import caml_program,code
-	.import mlraise,code
-	.import caml_apply2,code
-	.import caml_apply3,code
-#endif
-
 ; Allocation functions
 
         CODE
 	.align	CODE_ALIGN
         EXPORT_CODE(G(caml_alloc))
-DEFG(caml_alloc)
+G(caml_alloc):
         STARTPROC
 ; Required size in %r1
         ldw     0(%r4), %r31
@@ -89,7 +90,7 @@ DEFG(caml_alloc)
         ENDPROC
 
         EXPORT_CODE(G(caml_call_gc))
-DEFG(caml_call_gc)
+G(caml_call_gc):
         STARTPROC
 ; Save required size (%r1)
         copy    %r1, %r31
@@ -243,7 +244,7 @@ DEFG(caml_call_gc)
 
 	.align	CODE_ALIGN
 	EXPORT_CODE(G(caml_c_call))
-DEFG(caml_c_call)
+G(caml_c_call):
         STARTPROC
 ; Record lowest stack address
         LOADHIGH(G(caml_bottom_of_stack))
@@ -279,7 +280,7 @@ DEFG(caml_c_call)
 
 	.align	CODE_ALIGN
 	EXPORT_CODE(G(caml_start_program))
-DEFG(caml_start_program)
+G(caml_start_program):
         STARTPROC
 	stw     %r2,-20(%r30)
         ldo	256(%r30), %r30
@@ -328,7 +329,7 @@ DEFG(caml_start_program)
         copy    %r26, %r28              ; return exception bucket as result
         b       L101
         nop
-DEFLABEL(L100)
+L100:
         ldo     8(%r30), %r30
         stw     %r1, -4(%r30)
         copy    %r30, %r5
@@ -347,7 +348,7 @@ DEFLABEL(L100)
 ; Return with zero result
         ldi     0, %r28
 ; Restore callee-save registers
-DEFLABEL(L101)
+L101:
         ldo     -32(%r30), %r1
         ldws,ma -4(%r1), %r3
         ldws,ma -4(%r1), %r4
@@ -396,7 +397,7 @@ DEFLABEL(L101)
 
 	.align	CODE_ALIGN
 	EXPORT_CODE(G(raise_caml_exception))
-DEFG(raise_caml_exception)
+G(raise_caml_exception):
         STARTPROC
 ; Cut the stack
         LOADHIGH(G(caml_exception_pointer))
@@ -417,14 +418,14 @@ DEFG(raise_caml_exception)
 
         .align	CODE_ALIGN
         EXPORT_CODE(G(callback))
-DEFG(callback)
+G(callback):
         STARTPROC
 ; Initial shuffling of arguments
         copy    %r26, %r1       ; Closure
         copy    %r25, %r26      ; Argument
         copy    %r1, %r25
         ldw     0(%r1), %r22    ; Code to call
-DEFLABEL(L102)
+L102:
 ; Save return address
 	stw     %r2,-20(%r30)
         ldo	256(%r30), %r30
@@ -491,7 +492,7 @@ DEFLABEL(L102)
 ; Call the Caml code
         ble     0(4, %r22)
         copy    %r31, %r2        
-DEFLABEL(L104)
+L104:
 ; Pop the trap frame
         ldw     -8(%r30), %r31
         LOADHIGH(G(caml_exception_pointer))
@@ -554,7 +555,7 @@ DEFLABEL(L104)
         bv      0(%r2)
         nop
 ; The trap handler
-DEFLABEL(L103)
+L103:
 ; Pop the callback link
         ldw     -8(%r30), %r31
         LOADHIGH(G(caml_bottom_of_stack))
@@ -575,7 +576,7 @@ DEFLABEL(L103)
 
         .align	CODE_ALIGN
         EXPORT_CODE(G(callback2))
-DEFG(callback2)
+G(callback2):
         STARTPROC
         copy    %r26, %r1       ; Closure
         copy    %r25, %r26      ; First argument
@@ -588,7 +589,7 @@ DEFG(callback2)
 
         .align	CODE_ALIGN
         EXPORT_CODE(G(callback3))
-DEFG(callback3)
+G(callback3):
         STARTPROC
         copy    %r26, %r1       ; Closure
         copy    %r25, %r26      ; First argument
@@ -602,8 +603,8 @@ DEFG(callback3)
 
         .data
         EXPORT_DATA(G(system_frametable))
-DEFG(system_frametable)
-        WORD   1               /* one descriptor */
-        WORD   L104 + 3        /* return address into callback */
-        HALF  -1              /* negative frame size => use callback link */
-        HALF  0               /* no roots */
+G(system_frametable):
+        .word   1               /* one descriptor */
+        .word   L104 + 3        /* return address into callback */
+        .short  -1              /* negative frame size => use callback link */
+        .short  0               /* no roots */
