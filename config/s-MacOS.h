@@ -16,4 +16,4 @@
 #define HAS_STRERROR
 #define HAS_GETCWD
 
-#define SIGVTALRM 26 /* FIXME */
+#define HAS_UI
