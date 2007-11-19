@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id$ *)
+(* $Id: typecore.mli,v 1.39.2.1 2007-11-19 21:27:17 doligez Exp $ *)
 
 (* Type inference for the core language *)
 
@@ -68,7 +68,7 @@ type error =
   | Constructor_arity_mismatch of Longident.t * int * int
   | Label_mismatch of Longident.t * (type_expr * type_expr) list
   | Pattern_type_clash of (type_expr * type_expr) list
-  | Multiply_bound_variable
+  | Multiply_bound_variable of string
   | Orpat_vars of Ident.t
   | Expr_type_clash of (type_expr * type_expr) list
   | Apply_non_function of type_expr
