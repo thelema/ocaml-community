@@ -9,7 +9,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id$ *)
+(* $Id: ocamldep.mli,v 1.2.4.2 2007-11-19 15:25:32 ertai Exp $ *)
 (* Original author: Nicolas Pouillard *)
 exception Error of string
 val ocamldep_command : Pathname.t -> Pathname.t -> Command.spec
