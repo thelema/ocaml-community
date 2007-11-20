@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id$ */
+/* $Id: minor_gc.c,v 1.43.10.1 2007-11-20 18:27:06 doligez Exp $ */
 
 #include <string.h>
 #include "config.h"
@@ -34,6 +34,10 @@ static value **ref_table = NULL, **ref_table_end, **ref_table_threshold;
 CAMLexport value **caml_ref_table_ptr = NULL, **caml_ref_table_limit;
 static asize_t ref_table_size, ref_table_reserve;
 int caml_in_minor_collection = 0;
+
+#ifdef DEBUG
+static unsigned long minor_gc_counter = 0;
+#endif
 
 void caml_set_minor_heap_size (asize_t size)
 {
@@ -207,6 +211,7 @@ void caml_empty_minor_heap (void)
     for (p = (value *) caml_young_start; p < (value *) caml_young_end; ++p){
       *p = Debug_free_minor;
     }
+    ++ minor_gc_counter;
   }
 #endif
 }
@@ -254,7 +259,7 @@ void caml_realloc_ref_table (void)
 
     ref_table_size *= 2;
     sz = (ref_table_size + ref_table_reserve) * sizeof (value *);
-    caml_gc_message (0x08, "Growing ref_table to %" 
+    caml_gc_message (0x08, "Growing ref_table to %"
                            ARCH_INTNAT_PRINTF_FORMAT "dk bytes\n",
                      (intnat) sz/1024);
     ref_table = (value **) realloc ((char *) ref_table, sz);
