@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id$ */
+/* $Id: unix.c,v 1.28.4.1 2007-11-20 15:47:41 xleroy Exp $ */
 
 /* Unix-specific stuff */
 
@@ -350,10 +350,13 @@ char *caml_aligned_mmap (asize_t size, int modulo, void **block)
 {
   char *raw_mem;
   uintnat aligned_mem;
+  static char * last_addr = NULL; /* hint, see PR#4448 */
+
   Assert (modulo < Page_size);
-  raw_mem = (char *) mmap(NULL, size + Page_size, PROT_READ | PROT_WRITE,
+  raw_mem = (char *) mmap(last_addr, size + Page_size, PROT_READ | PROT_WRITE,
                           MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
   if (raw_mem == MAP_FAILED) return NULL;
+  last_addr = raw_mem + size + 2 * Page_size;
   *block = raw_mem;
   raw_mem += modulo;                /* Address to be aligned */
   aligned_mem = (((uintnat) raw_mem / Page_size + 1) * Page_size);
