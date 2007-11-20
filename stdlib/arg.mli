@@ -11,7 +11,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id$ *)
+(* $Id: arg.mli,v 1.36.10.1 2007-11-20 18:24:24 doligez Exp $ *)
 
 (** Parsing of command line arguments.
 
@@ -125,7 +125,7 @@ val align: (key * spec * doc) list -> (key * spec * doc) list;;
     space, according to the length of the keyword.  Use a
     space as the first character in a doc string if you want to
     align the whole string.  The doc strings corresponding to
-    [Symbol] arguments are not aligned. *)
+    [Symbol] arguments are aligned on the next line. *)
 
 val current : int ref
 (** Position (in {!Sys.argv}) of the argument being processed.  You can
