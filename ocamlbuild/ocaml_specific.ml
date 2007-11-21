@@ -9,7 +9,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: ocaml_specific.ml,v 1.6.2.12 2007-11-21 18:29:37 ertai Exp $ *)
+(* $Id: ocaml_specific.ml,v 1.6.2.13 2007-11-21 20:46:46 ertai Exp $ *)
 (* Original author: Nicolas Pouillard *)
 open My_std
 open Format
@@ -281,6 +281,19 @@ if !Options.use_menhir || Configuration.has_tag "use_menhir" then begin
     ~prod:"%.mly.depends"
     ~dep:"%.mly"
     (Ocaml_tools.menhir_ocamldep_command "%.mly" "%.mly.depends");
+
+  (* Automatic handling of menhir modules, given a
+     description file %.mlypack                         *)
+  rule "ocaml: modular menhir (mlypack)"
+    ~prods:["%.mli" ; "%.ml"]
+    ~deps:["%.mlypack"]
+    (Ocaml_tools.menhir_modular "%" "%.mlypack" "%.mlypack.depends");
+
+  rule "ocaml: menhir modular dependencies"
+    ~prod:"%.mlypack.depends"
+    ~dep:"%.mlypack"
+    (Ocaml_tools.menhir_modular_ocamldep_command "%.mlypack" "%.mlypack.depends")
+
 end else
   rule "ocamlyacc"
     ~tags:["ocaml"] (* FIXME "parser" *)
