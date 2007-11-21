@@ -9,7 +9,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: signatures.mli,v 1.8.2.4 2007-11-21 20:48:07 ertai Exp $ *)
+(* $Id: signatures.mli,v 1.8.2.5 2007-11-21 21:01:21 ertai Exp $ *)
 (* Original author: Nicolas Pouillard *)
 (** This module contains all module signatures that the user
     could use to build an ocamlbuild plugin. *)
@@ -81,6 +81,12 @@ module type STRING = sig
   val tr : char -> char -> string -> string
 
   val rev : string -> string
+
+  (* Convert a character list into a character string *)
+  val implode : char list -> string
+
+  (* Convert a character string into a character list *)
+  val explode : string -> char list
 
   (** The following are original functions from the [String] module. *)
   include Std_signatures.STRING
