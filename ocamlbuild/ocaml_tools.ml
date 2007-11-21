@@ -9,7 +9,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: ocaml_tools.ml,v 1.2.4.6 2007-11-21 20:46:46 ertai Exp $ *)
+(* $Id: ocaml_tools.ml,v 1.2.4.7 2007-11-21 21:07:10 ertai Exp $ *)
 (* Original author: Nicolas Pouillard *)
 open My_std
 open Pathname.Operators
@@ -21,8 +21,8 @@ open Ocaml_utils
 let add_suffix s = List.map (fun x -> x -.- s) ;;
 
 let ocamldep_command' tags spec =
-  let tags = tags++"ocaml"++"ocamldep" in
-    S [!Options.ocamldep; T tags; ocaml_ppflags tags;
+  let tags' = tags++"ocaml"++"ocamldep" in
+    S [!Options.ocamldep; T tags'; ocaml_ppflags (tags++"pp:dep");
        spec; A "-modules"]
 
 let menhir_ocamldep_command' tags ~menhir_spec ~ocamldep_spec out =
