@@ -9,7 +9,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: rule.ml,v 1.2.2.5 2007-11-21 21:02:58 ertai Exp $ *)
+(* $Id: rule.ml,v 1.2.2.6 2007-11-21 21:05:30 ertai Exp $ *)
 (* Original author: Nicolas Pouillard *)
 open My_std
 open Format
@@ -32,6 +32,10 @@ type 'a gen_rule =
 
 type rule = Pathname.t gen_rule
 type rule_scheme = Resource.resource_pattern gen_rule
+
+let name_of_rule r = r.name
+let deps_of_rule r = r.deps
+let prods_of_rule r = r.prods
 
 type 'a rule_printer = (Format.formatter -> 'a -> unit) -> Format.formatter -> 'a gen_rule -> unit
 
