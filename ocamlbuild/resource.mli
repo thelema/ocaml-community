@@ -9,7 +9,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: resource.mli,v 1.1.4.1 2007-11-19 15:26:55 ertai Exp $ *)
+(* $Id: resource.mli,v 1.1.4.2 2007-11-21 21:02:58 ertai Exp $ *)
 (* Original author: Nicolas Pouillard *)
 open My_std
 
@@ -62,6 +62,7 @@ val import_pattern : string -> resource_pattern
 
 val matchit : resource_pattern -> t -> env option
 val subst : env -> t -> t
+val subst_any : env -> t -> t
 val subst_pattern : env -> resource_pattern -> t
 val is_up_to_date : t -> bool
 val print_env : Format.formatter -> env -> unit

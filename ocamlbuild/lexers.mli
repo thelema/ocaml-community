@@ -9,7 +9,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id$ *)
+(* $Id: lexers.mli,v 1.2.2.2 2007-11-21 21:02:58 ertai Exp $ *)
 (* Original author: Nicolas Pouillard *)
 exception Error of string
 
@@ -33,4 +33,7 @@ val comma_or_blank_sep_strings : Lexing.lexbuf -> string list
 val colon_sep_strings : Lexing.lexbuf -> string list
 
 val conf_lines : string option -> int -> string -> Lexing.lexbuf -> conf
-val meta_path : Lexing.lexbuf -> (string * bool) list
+val path_scheme : bool -> Lexing.lexbuf ->
+  [ `Word of string
+  | `Var of (string * Glob.globber)
+  ] list

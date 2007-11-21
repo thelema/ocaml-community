@@ -9,7 +9,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: glob_lexer.mll,v 1.1.4.2 2007-11-21 21:02:05 ertai Exp $ *)
+(* $Id: glob_lexer.mll,v 1.1.4.3 2007-11-21 21:02:58 ertai Exp $ *)
 (* Original author: Berke Durak *)
 (* Glob *)
 {
@@ -82,6 +82,7 @@ and parse_pattern eof_chars p = parse
     let cl = Or(parse_class [] lexbuf) in
     parse_pattern eof_chars (concat_patterns p (Class cl)) lexbuf
   }
+(* Random thought... **/* seems to be equal to True *)
 | "/**/" (* / | /\Sigma^*/ *)
   { let q = Union[slash; Concat(slash, Concat(Star any, slash)) ] in
     parse_pattern eof_chars (concat_patterns p q) lexbuf }
