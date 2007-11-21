@@ -9,7 +9,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id$ *)
+(* $Id: ppcache.ml,v 1.1.4.1 2007-11-21 20:55:26 ertai Exp $ *)
 (* Original author: Nicolas Pouillard *)
 open My_std
 open Command
@@ -70,9 +70,11 @@ let () = Shell.mkdir_p cache_dir;;
 
 let path = cache_dir/(Digest.to_hex digest);;
 
+let cat path = with_input_file ~bin:true path (fun ic -> copy_chan ic stdout);;
+
 if sys_file_exists path then
   if !output = "" then
-    print_string (read_file path)
+    cat path
   else
     Shell.cp path !output
 else
@@ -81,7 +83,7 @@ else
     let tmp = path^".tmp" in
     Command.execute (Cmd(S[cmd; Sh ">"; A tmp]));
     Shell.mv tmp path;
-    print_string (read_file path)
+    cat path
   end else begin
     Command.execute (Cmd cmd);
     Shell.cp !output path
