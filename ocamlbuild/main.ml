@@ -9,7 +9,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: main.ml,v 1.8.2.4 2007-11-19 15:26:55 ertai Exp $ *)
+(* $Id: main.ml,v 1.8.2.5 2007-11-21 18:29:37 ertai Exp $ *)
 (* Original author: Berke Durak *)
 open My_std
 open Log
@@ -275,7 +275,7 @@ let main () =
             This is likely to be a bug, please report this to the ocamlbuild\n\
             developers." s;
           exit rc_invalid_argument
-      | Ocamldep.Error msg ->
+      | Ocaml_utils.Ocamldep_error msg ->
           Log.eprintf "Ocamldep error: %s" msg;
           exit rc_ocamldep_error
       | Lexers.Error msg ->

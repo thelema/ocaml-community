@@ -9,7 +9,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id$ *)
+(* $Id: ocaml_utils.mli,v 1.3.2.1 2007-11-21 18:29:37 ertai Exp $ *)
 (* Original author: Nicolas Pouillard *)
 val stdlib_dir : Pathname.t Lazy.t
 val module_name_of_filename : Pathname.t -> string
@@ -25,7 +25,11 @@ val libraries_of : Pathname.t -> Pathname.t list
 val use_lib : Pathname.t -> Pathname.t -> unit
 val cmi_of : Pathname.t -> Pathname.t
 val ocaml_add_include_flag : string -> Command.spec list -> Command.spec list
-val module_importance : string -> string -> [ `ignored | `mandatory | `just_try ]
+
+exception Ocamldep_error of string
+
+(* Takes a path and returns a list of modules *)
+val path_dependencies_of : Pathname.t -> ([ `mandatory | `just_try ] * string) list
 
 val info_libraries : (string, string * bool) Hashtbl.t
 

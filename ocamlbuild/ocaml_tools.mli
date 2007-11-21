@@ -9,13 +9,15 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id$ *)
+(* $Id: ocaml_tools.mli,v 1.2.4.2 2007-11-21 18:29:37 ertai Exp $ *)
 (* Original author: Nicolas Pouillard *)
 
 val ocamldoc_c : Tags.t -> string -> string -> Command.t
 val ocamldoc_l_dir : Tags.t -> string list -> string -> string -> Command.t
 val ocamldoc_l_file : Tags.t -> string list -> string -> string -> Command.t
 
+val ocamldep_command : string -> string -> Rule.action
+val menhir_ocamldep_command : string -> string -> Rule.action
 val ocamlyacc : string -> Rule.action
 val ocamllex : string -> Rule.action
 val menhir : string -> Rule.action
