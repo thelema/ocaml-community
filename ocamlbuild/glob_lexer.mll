@@ -9,7 +9,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id$ *)
+(* $Id: glob_lexer.mll,v 1.1.4.1 2007-11-21 20:48:07 ertai Exp $ *)
 (* Original author: Berke Durak *)
 (* Glob *)
 {
@@ -94,7 +94,7 @@ and parse_pattern eof_chars p = parse
 | "**" { raise (Parse_error("Ambiguous ** pattern not allowed unless surrounded by one or more slashes")) }
 | '*' { parse_pattern eof_chars (concat_patterns p (Star not_slash)) lexbuf }
 | '/' { parse_pattern eof_chars (concat_patterns p slash) lexbuf }
-| '?' { parse_pattern eof_chars (concat_patterns p (Class True)) lexbuf }
+| '?' { parse_pattern eof_chars (concat_patterns p not_slash) lexbuf }
 | _ as c
   { if List.mem c eof_chars then 
       (p,c)
