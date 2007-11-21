@@ -9,7 +9,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: rule.mli,v 1.2.2.4 2007-11-21 21:05:30 ertai Exp $ *)
+(* $Id: rule.mli,v 1.2.2.5 2007-11-21 21:06:37 ertai Exp $ *)
 (* Original author: Nicolas Pouillard *)
 open My_std
 open Resource
@@ -46,16 +46,6 @@ val file_rule : string ->
   ?insert:[`top | `before of string | `after of string | `bottom] ->
   cache:(env -> builder -> string) ->
   (env -> out_channel -> unit) -> unit
-
-val custom_rule : string ->
-  ?tags:string list ->
-  ?prods:string list ->
-  ?prod:string ->
-  ?deps:string list ->
-  ?dep:string ->
-  ?insert:[`top | `before of string | `after of string | `bottom] ->
-  cache:(env -> builder -> string) ->
-  (env -> cached:bool -> unit) -> unit
 
 (** [copy_rule name ?insert source destination] *)
 val copy_rule : string ->

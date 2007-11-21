@@ -9,7 +9,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: rule.ml,v 1.2.2.7 2007-11-21 21:06:14 ertai Exp $ *)
+(* $Id: rule.ml,v 1.2.2.8 2007-11-21 21:06:37 ertai Exp $ *)
 (* Original author: Nicolas Pouillard *)
 open My_std
 open Format
@@ -301,11 +301,6 @@ let file_rule name ?tags ~prod ?deps ?dep ?insert ~cache action =
         with_output_file (env prod) (action env)
     in
     DigestThunk(cache env build, thunk)
-  end
-
-let custom_rule name ?tags ?prods ?prod ?deps ?dep ?insert ~cache action =
-  gen_rule name ?tags ?prods ?prod ?dep ?deps ?insert begin fun env build ->
-    DigestThunk(cache env build, fun cached -> action env ~cached)
   end
 
 module Common_commands = struct

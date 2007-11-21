@@ -9,7 +9,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: signatures.mli,v 1.8.2.5 2007-11-21 21:01:21 ertai Exp $ *)
+(* $Id: signatures.mli,v 1.8.2.6 2007-11-21 21:06:37 ertai Exp $ *)
 (* Original author: Nicolas Pouillard *)
 (** This module contains all module signatures that the user
     could use to build an ocamlbuild plugin. *)
@@ -464,16 +464,6 @@ module type PLUGIN = sig
     ?insert:[`top | `before of string | `after of string | `bottom] ->
     cache:(env -> builder -> string) ->
     (env -> out_channel -> unit) -> unit
-
-  val custom_rule : string ->
-    ?tags:string list ->
-    ?prods:string list ->
-    ?prod:string ->
-    ?deps:string list ->
-    ?dep:string ->
-    ?insert:[`top | `before of string | `after of string | `bottom] ->
-    cache:(env -> builder -> string) ->
-    (env -> cached:bool -> unit) -> unit
 
   (** [copy_rule name ?insert source destination] *)
   val copy_rule : string ->
