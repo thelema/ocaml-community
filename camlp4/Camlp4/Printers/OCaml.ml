@@ -20,7 +20,7 @@ open Format;
 
 module Id = struct
   value name = "Camlp4.Printers.OCaml";
-  value version = "$Id: OCaml.ml,v 1.21.2.18 2007-11-21 15:40:43 ertai Exp $";
+  value version = "$Id: OCaml.ml,v 1.21.2.19 2007-11-21 15:43:29 ertai Exp $";
 end;
 
 module Make (Syntax : Sig.Camlp4Syntax) = struct
@@ -671,6 +671,7 @@ module Make (Syntax : Sig.Camlp4Syntax) = struct
         pp f "@[<2>%a =@ %a@]" o#simple_ctyp t1 o#simple_ctyp t2
     | <:ctyp< `$s$ >> -> pp f "`%a" o#var s
     | <:ctyp< $t1$ * $t2$ >> -> pp f "%a *@ %a" o#simple_ctyp t1 o#simple_ctyp t2
+    | <:ctyp<>> -> assert False
     | t -> pp f "@[<1>(%a)@]" o#ctyp t ];
 
     method ctyp f t =
