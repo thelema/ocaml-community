@@ -9,7 +9,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id$ *)
+(* $Id: my_std.ml,v 1.2.2.3 2007-11-21 20:53:41 ertai Exp $ *)
 (* Original author: Nicolas Pouillard *)
 open Format
 
@@ -276,7 +276,7 @@ let read_file x =
 let copy_chan ic oc =
   let m = in_channel_length ic in
   let m = (m lsr 12) lsl 12 in
-  let m = max 16384 (min 16777216 m) in
+  let m = max 16384 (min Sys.max_string_length m) in
   let buf = String.create m in
   let rec loop () =
     let len = input ic buf 0 m in
