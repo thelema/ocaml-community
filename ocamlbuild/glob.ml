@@ -9,7 +9,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id$ *)
+(* $Id: glob.ml,v 1.2.2.1 2007-11-21 21:02:05 ertai Exp $ *)
 (* Original author: Berke Durak *)
 (* Glob *)
 open My_std;;
@@ -285,13 +285,16 @@ module Brute =
 end
 ;;
 (* ***)
-(*** fast_pattern, globber *)
-type fast_pattern =
+(*** fast_pattern_contents, fast_pattern, globber *)
+type fast_pattern_contents =
 | Brute of int ref * pattern
 | Machine of NFA.machine
 ;;
-
-type globber = fast_pattern ref atom Bool.boolean;;
+type fast_pattern = fast_pattern_contents ref;;
+type globber = fast_pattern atom Bool.boolean;;
+(* ***)
+(*** fast_pattern_of_pattern *)
+let fast_pattern_of_pattern p = ref (Brute(ref 0, p));;
 (* ***)
 (*** add_dir *)
 let add_dir dir x =
@@ -348,7 +351,7 @@ let parse ?dir u =
         let a =
           match add_dir dir x with
           | Constant u -> Constant u
-          | Pattern p -> Pattern(ref (Brute(ref 0, p)))
+          | Pattern p -> Pattern(fast_pattern_of_pattern p)
         in
         continuation (Atom a)
       end

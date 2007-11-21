@@ -9,10 +9,15 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id$ *)
+(* $Id: glob.mli,v 1.1.4.1 2007-11-21 21:02:05 ertai Exp $ *)
 (* Original author: Berke Durak *)
 (* Glob *)
 
+(** The type representing fast patterns.  Do not attempt to compare them, as they get on-the-fly optimizations. *)
+type fast_pattern
+
 (** A self-contained module implementing extended shell glob patterns who have an expressive power
     equal to boolean combinations of regular expressions.  *)
-include Signatures.GLOB
+include Signatures.GLOB with type globber = fast_pattern Glob_ast.atom Bool.boolean
+
+val fast_pattern_of_pattern : Glob_ast.pattern -> fast_pattern

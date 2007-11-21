@@ -9,7 +9,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: glob_lexer.mll,v 1.1.4.1 2007-11-21 20:48:07 ertai Exp $ *)
+(* $Id: glob_lexer.mll,v 1.1.4.2 2007-11-21 21:02:05 ertai Exp $ *)
 (* Original author: Berke Durak *)
 (* Glob *)
 {
@@ -106,6 +106,7 @@ and parse_string b = parse
 | "\""                  { Buffer.contents b }
 | "\\\""                { Buffer.add_char b '"'; parse_string b lexbuf }
 | [^'"' '\\']+ as u     { Buffer.add_string b u; parse_string b lexbuf }
+| _ as c                { raise (Parse_error(sf "Unexpected character %C in string" c)) }
 
 and parse_class cl = parse
 | ']'                     { cl }
