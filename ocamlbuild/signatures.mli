@@ -9,7 +9,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: signatures.mli,v 1.8.2.6 2007-11-21 21:06:37 ertai Exp $ *)
+(* $Id$ *)
 (* Original author: Nicolas Pouillard *)
 (** This module contains all module signatures that the user
     could use to build an ocamlbuild plugin. *)
@@ -522,7 +522,6 @@ module type PLUGIN = sig
   val ln_f : Pathname.t -> Pathname.t -> Command.t
   val ln_s : Pathname.t -> Pathname.t -> Command.t
   val rm_f : Pathname.t -> Command.t
-  val touch : Pathname.t -> Command.t
   val chmod : Command.spec -> Pathname.t -> Command.t
   val cmp : Pathname.t -> Pathname.t -> Command.t
 

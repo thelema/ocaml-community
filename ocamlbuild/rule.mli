@@ -9,7 +9,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: rule.mli,v 1.2.2.5 2007-11-21 21:06:37 ertai Exp $ *)
+(* $Id$ *)
 (* Original author: Nicolas Pouillard *)
 open My_std
 open Resource
@@ -62,7 +62,6 @@ module Common_commands : sig
   val ln_f : Pathname.t -> Pathname.t -> Command.t
   val ln_s : Pathname.t -> Pathname.t -> Command.t
   val rm_f : Pathname.t -> Command.t
-  val touch : Pathname.t -> Command.t
   val chmod : Command.spec -> Pathname.t -> Command.t
   val cmp : Pathname.t -> Pathname.t -> Command.t
 end
