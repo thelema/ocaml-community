@@ -9,7 +9,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: ocaml_specific.ml,v 1.6.2.13 2007-11-21 20:46:46 ertai Exp $ *)
+(* $Id: ocaml_specific.ml,v 1.6.2.14 2007-11-21 21:04:59 ertai Exp $ *)
 (* Original author: Nicolas Pouillard *)
 open My_std
 open Format
@@ -189,15 +189,11 @@ rule "ocaml: cmo* -> cma"
   ~dep:"%.cmo"
   (Ocaml_compiler.byte_library_link "%.cmo" "%.cma");;
 
-rule "ocaml C stubs (short): clib & (o|obj)* -> (a|lib) & (so|dll)"
-  ~prods:["lib%(libname)"-.-ext_lib; "dll%(libname)"-.-ext_dll]
-  ~dep:"lib%(libname).clib"
-  (C_tools.link_C_library "lib%(libname).clib" ("lib%(libname)"-.-ext_lib) "%(libname)");;
-
 rule "ocaml C stubs: clib & (o|obj)* -> (a|lib) & (so|dll)"
-  ~prods:["%(path)/lib%(libname)"-.-ext_lib; "%(path)/dll%(libname)"-.-ext_dll]
-  ~dep:"%(path)/lib%(libname).clib"
-  (C_tools.link_C_library "%(path)/lib%(libname).clib" ("%(path)/lib%(libname)"-.-ext_lib) "%(path)/%(libname)");;
+  ~prods:["%(path:<**/>)lib%(libname:<*> and not <*.*>)"-.-ext_lib;
+          "%(path:<**/>)dll%(libname:<*> and not <*.*>)"-.-ext_dll]
+  ~dep:"%(path)lib%(libname).clib"
+  (C_tools.link_C_library "%(path)lib%(libname).clib" ("%(path)lib%(libname)"-.-ext_lib) "%(path)%(libname)");;
 
 rule "ocaml: mllib & p.cmx* & p.o* -> p.cmxa & p.a"
   ~tags:["ocaml"; "native"; "profile"; "library"]
