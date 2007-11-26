@@ -11,7 +11,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: arg.ml,v 1.35.12.1 2007-11-20 18:24:24 doligez Exp $ *)
+(* $Id$ *)
 
 type key = string
 type doc = string
@@ -65,7 +65,7 @@ let make_symlist prefix sep suffix l =
 
 let print_spec buf (key, spec, doc) =
   match spec with
-  | Symbol (l, _) -> bprintf buf "  %s %s %s\n" key (make_symlist "{" "|" "}" l)
+  | Symbol (l, _) -> bprintf buf "  %s %s%s\n" key (make_symlist "{" "|" "}" l)
                              doc
   | _ -> bprintf buf "  %s %s\n" key doc
 ;;
