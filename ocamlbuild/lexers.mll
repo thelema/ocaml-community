@@ -9,7 +9,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: lexers.mll,v 1.2.2.2 2007-11-21 21:02:58 ertai Exp $ *)
+(* $Id$ *)
 (* Original author: Nicolas Pouillard *)
 {
 exception Error of string
@@ -58,6 +58,7 @@ and space_sep_strings = parse
 
 and blank_sep_strings = parse
   | blank* '#' not_newline* newline { blank_sep_strings lexbuf }
+  | blank* '#' not_newline* eof { [] }
   | blank* (not_blank+ as word) { word :: blank_sep_strings lexbuf }
   | blank* eof { [] }
   | _ { raise (Error "Expecting blank-separated strings") }
@@ -95,6 +96,7 @@ and colon_sep_strings_aux = parse
 
 and conf_lines dir pos err = parse
   | space* '#' not_newline* newline { conf_lines dir (pos + 1) err lexbuf }
+  | space* '#' not_newline* eof { [] }
   | space* newline { conf_lines dir (pos + 1) err lexbuf }
   | space* eof { [] }
   | space* (not_newline_nor_colon+ as k) space* ':' space*
