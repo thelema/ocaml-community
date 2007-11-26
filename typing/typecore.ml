@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: typecore.ml,v 1.190.2.6 2007-11-19 21:27:17 doligez Exp $ *)
+(* $Id$ *)
 
 (* Typechecking for the core language *)
 
@@ -618,6 +618,7 @@ let rec is_nonexpansive exp =
   | Texp_array [] -> true
   | Texp_ifthenelse(cond, ifso, ifnot) ->
       is_nonexpansive ifso && is_nonexpansive_opt ifnot
+  | Texp_sequence (e1, e2) -> is_nonexpansive e2  (* PR#4354 *)
   | Texp_new (_, cl_decl) when Ctype.class_type_arity cl_decl.cty_type > 0 ->
       true
   (* Note: nonexpansive only means no _observable_ side effects *)
