@@ -19,7 +19,7 @@ open Camlp4;                                        (* -*- camlp4r -*- *)
  *)
 
 module Id = struct
-  value name = "Camlp4RevisedParser";
+  value name = "Camlp4OCamlRevisedParser";
   value version = "$Id$";
 end;
 
@@ -593,8 +593,7 @@ Very old (no more supported) syntax:
             <:expr< let module $m$ = $mb$ in $e$ >>
         | "fun"; "["; a = LIST0 match_case0 SEP "|"; "]" ->
             <:expr< fun [ $list:a$ ] >>
-        | "fun"; p = labeled_ipatt; e = fun_def ->
-            <:expr< fun $p$ -> $e$ >>
+        | "fun"; e = fun_def -> e
         | "match"; e = sequence; "with"; a = match_case ->
             <:expr< match $mksequence' _loc e$ with [ $a$ ] >>
         | "try"; e = sequence; "with"; a = match_case ->
@@ -811,9 +810,14 @@ Very old (no more supported) syntax:
         | i = label_longident; e = fun_binding -> <:rec_binding< $i$ = $e$ >> ] ]
     ;
     fun_def:
+      [ [ p = labeled_ipatt; (w, e) = fun_def_cont ->
+            <:expr< fun [ $p$ when $w$ -> $e$ ] >> ] ]
+    ;
+    fun_def_cont:
       [ RIGHTA
-        [ p = labeled_ipatt; e = SELF -> <:expr< fun $p$ -> $e$ >>
-        | "->"; e = expr -> e ] ]
+        [ p = labeled_ipatt; (w,e) = SELF -> (<:expr<>>, <:expr< fun [ $p$ when $w$ -> $e$ ] >>)
+        | "when"; w = expr; "->"; e = expr -> (w, e)
+        | "->"; e = expr -> (<:expr<>>, e) ] ]
     ;
     patt:
       [ "|" LEFTA
@@ -1252,6 +1256,8 @@ Very old (no more supported) syntax:
             <:class_str_item< inherit $ce$ as $pb$ >>
         | value_val; mf = opt_mutable; lab = label; e = cvalue_binding ->
             <:class_str_item< value $mutable:mf$ $lab$ = $e$ >>
+        | value_val; mf = opt_mutable; "virtual"; l = label; ":"; t = poly_type ->
+            <:class_str_item< value virtual $mutable:mf$ $l$ : $t$ >>
         | value_val; "virtual"; mf = opt_mutable; l = label; ":"; t = poly_type ->
             <:class_str_item< value virtual $mutable:mf$ $l$ : $t$ >>
         | "method"; "virtual"; pf = opt_private; l = label; ":"; t = poly_type ->
@@ -1628,7 +1634,7 @@ Very old (no more supported) syntax:
     ;
     more_ctyp:
       [ [ "mutable"; x = SELF -> <:ctyp< mutable $x$ >>
-        | "`"; x = a_LIDENT -> <:ctyp< `$x$ >>
+        | "`"; x = a_ident -> <:ctyp< `$x$ >>
         | x = type_kind -> x
         | x = type_parameter -> x
       ] ]
