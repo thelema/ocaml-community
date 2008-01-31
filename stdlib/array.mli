@@ -204,7 +204,7 @@ val map2 : ('a -> 'b -> 'c) -> 'a array -> 'b array -> 'c array
     b.(Array.length b - 1) |]]. Raises [Invalid_argument "map2"] if
     arrays a and b have different lengths. *)
 
-val fold_left2 : ('a -> 'b -> 'c -> 'a) -> 'a -> 'b array -> 'c array
+val fold_left2 : ('a -> 'b -> 'c -> 'a) -> 'a -> 'b array -> 'c array -> 'a
 (** as [fold_left] but iterates over two arrays of same length. *)
 
 val fold_right2 : ('a -> 'b -> 'c -> 'c) -> 'a array -> 'b array -> 'c -> 'c

@@ -283,7 +283,7 @@ let fast_sort = stable_sort;;
 let map2 f a b =
   let len = length a in
   if len <> length b then invalid_arg "map2";
-  init len (fun i -> f a.(i) b.(i))
+  init len (fun i -> f (unsafe_get a i) (unsafe_get b i))
 ;;
 
 let fold_left2 f x a b =
@@ -291,7 +291,7 @@ let fold_left2 f x a b =
   if len <> length b then invalid_arg "fold_left2";
   let r = ref x in
   for i = 0 to len - 1 do
-    r := f !r a.(i) b.(i)
+    r := f !r (unsafe_get a i) (unsafe_get b i)
   done;
   !r
 ;;
@@ -301,7 +301,7 @@ let fold_right2 f a b x =
   if len <> length b then invalid_arg "fold_right2";
   let r = ref x in
   for i = len - 1 downto 0 do
-    r := f a.(i) b.(i) !r
+    r := f (unsafe_get a i) (unsafe_get b i) !r
   done;
   !r
 ;;

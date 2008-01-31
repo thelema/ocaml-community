@@ -9,6 +9,7 @@
 (*  under the terms of the GNU Library General Public License, with    *)
 (*  the special exception on linking described in file ../../LICENSE.  *)
 (*                                                                     *)
+(*   (C) Flying Frog Consultancy Ltd., 2006                            *)
 (***********************************************************************)
 
 (* $Id$ *)
@@ -124,6 +125,7 @@ let min_float =
   float_of_bits 0x00_10_00_00_00_00_00_00L
 let epsilon_float =
   float_of_bits 0x3C_B0_00_00_00_00_00_00L
+let pi = 4. *. atan 1.
 
 type fpclass =
     FP_normal
