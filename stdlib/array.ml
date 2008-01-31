@@ -9,6 +9,7 @@
 (*  under the terms of the GNU Library General Public License, with    *)
 (*  the special exception on linking described in file ../LICENSE.     *)
 (*                                                                     *)
+(*   (C) Flying Frog Consultancy Ltd., 2006                            *)
 (***********************************************************************)
 
 (* $Id$ *)
@@ -277,3 +278,32 @@ let stable_sort cmp a =
 ;;
 
 let fast_sort = stable_sort;;
+
+(* from ff's stdlib2 *)
+let map2 f a b =
+  let len = length a in
+  if len <> length b then invalid_arg "map2";
+  init len (fun i -> f a.(i) b.(i))
+;;
+
+let fold_left2 f x a b =
+  let len = length a in
+  if len <> length b then invalid_arg "fold_left2";
+  let r = ref x in
+  for i = 0 to len - 1 do
+    r := f !r a.(i) b.(i)
+  done;
+  !r
+;;
+
+let fold_right2 f a b x =
+  let len = length a in
+  if len <> length b then invalid_arg "fold_right2";
+  let r = ref x in
+  for i = len - 1 downto 0 do
+    r := f a.(i) b.(i) !r
+  done;
+  !r
+;;
+
+(* end ff2 *)

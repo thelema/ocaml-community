@@ -197,6 +197,19 @@ val fast_sort : ('a -> 'a -> int) -> 'a array -> unit
     on typical input.
 *)
 
+val map2 : ('a -> 'b -> 'c) -> 'a array -> 'b array -> 'c array
+(** [Array.map2 f a] applies function [f] to all the elements of [a]
+    and [b], and builds an array with the results returned by [f]:
+    [[| f a.(0) b.(0); f a.(1) b.(1); ...; f a.(Array.length a - 1)
+    b.(Array.length b - 1) |]]. Raises [Invalid_argument "map2"] if
+    arrays a and b have different lengths. *)
+
+val fold_left2 : ('a -> 'b -> 'c -> 'a) -> 'a -> 'b array -> 'c array
+(** as [fold_left] but iterates over two arrays of same length. *)
+
+val fold_right2 : ('a -> 'b -> 'c -> 'c) -> 'a array -> 'b array -> 'c -> 'c
+(** as [fold_left2] but starts at the right-hand end of the array *)
+
 
 (**/**)
 (** {6 Undocumented functions} *)
