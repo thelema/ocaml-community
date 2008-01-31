@@ -363,6 +363,9 @@ val min_float : float
 val epsilon_float : float
 (** The smallest positive float [x] such that [1.0 +. x <> 1.0]. *)
 
+val pi : float
+(** The constant pi (3.14159...) *)
+
 type fpclass =
     FP_normal           (** Normal number, none of the below *)
   | FP_subnormal        (** Number very close to 0.0, has reduced precision *)
