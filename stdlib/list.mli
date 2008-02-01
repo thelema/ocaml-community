@@ -275,3 +275,13 @@ val merge : ('a -> 'a -> int) -> 'a list -> 'a list -> 'a list
     before the elements of [l2].
     Not tail-recursive (sum of the lengths of the arguments).
 *)
+
+val cons : 'a -> 'a list -> 'a list
+(** Same as constructor [::], but as a function *)
+
+val count : ('a -> bool) -> 'a list -> int
+(** [count pred l] returns the number of elements [e] of [l] for which [pred e] evaluates to true *)
+
+val positions : ('a -> bool) -> 'a list -> int list
+(** [positions pred l] returns a list of positions at which elements [e] of [l] make [pred e] true.  ex: [positions (fun x -> x > 2) [1; 3; 5; 2; 4]] returns [[1; 2; 4]] *)
+

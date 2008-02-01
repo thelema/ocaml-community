@@ -9,6 +9,7 @@
 (*  under the terms of the GNU Library General Public License, with    *)
 (*  the special exception on linking described in file ../LICENSE.     *)
 (*                                                                     *)
+(*   (C) Flying Frog Consultancy Ltd., 2006                            *)
 (***********************************************************************)
 
 (* $Id$ *)
@@ -314,3 +315,57 @@ let stable_sort cmp l =
   array_to_list_in_place a
 ;;
 *)
+
+let cons h t = h :: t
+
+let rec fold_left f accu = function
+  | h1::h2::h3::h4::t ->
+      fold_left f (f (f (f (f accu h1) h2) h3) h4) t
+  | h::t -> fold_left f (f accu h) t
+  | [] -> accu
+
+
+(********************************
+  This implementation of fold_right causes 'make world' to fail with error linking dynlink.cma:
+
+  ../../boot/ocamlrun ../../ocamlc -warn-error A -I ../../stdlib -I ../../utils -I ../../typing -I ../../bytecomp -o extract_crc dynlink.cma extract_crc.cmo
+  Error while linking dynlink.cma(Dynlink):
+  Reference to undefined global `Dynlinkaux'
+
+
+let rec fold_right_aux n f list accu =
+  if n<=0 then Array.fold_right f (Array.of_list list) accu else
+    match list with
+      | h1::h2::h3::h4::t ->
+	  f h1 (f h2 (f h3 (f h4 (fold_right_aux (n - 4) f t accu))))
+      | h::t -> fold_right_aux (n - 1) f t (f h accu)
+      | [] -> accu
+
+let fold_right f list accu = fold_right_aux max_int f list accu
+let rec rev_iter f = function
+    [] -> ()
+  | h::t ->
+      rev_iter f t;
+      f h
+****************************************)
+
+(* DOCUMENT THIS - sometimes slower than simple implementation?*)
+let rec map_k f t k = match t with
+  | [] -> k []
+  | h::t -> map_k f t (fun t -> k(f h :: t))
+
+let rec map_aux n f = function
+    [] -> []
+  | h :: t ->
+      let h = f h in
+      if n=0 then map_k f t (fun t -> h :: t) else h :: map_aux (n-1) f t
+
+let map f l = map_aux 1024 f l
+
+let count pred l =
+  fold_left (fun count e -> count + if pred e then 1 else 0) 0 l
+
+let positions pred l =
+  let aux (i, is) e = i + 1, if pred e then i :: is else is in
+  rev (snd (fold_left aux (0, []) l))
+
