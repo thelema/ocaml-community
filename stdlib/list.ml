@@ -316,6 +316,8 @@ let stable_sort cmp l =
 ;;
 *)
 
+
+(****** FUNCTIONS FROM STDLIB2 ********)
 let cons h t = h :: t
 
 let rec fold_left f accu = function
@@ -369,3 +371,32 @@ let positions pred l =
   let aux (i, is) e = i + 1, if pred e then i :: is else is in
   rev (snd (fold_left aux (0, []) l))
 
+let mapi f l =
+  let rec aux n = function
+      h :: t -> let h = f n h in h :: aux (n + 1) t
+    | [] -> [] in
+  aux 0 l
+    
+let rev_mapi f l =
+  let rec aux n accu = function
+      h :: t -> aux (n + 1) (f n h :: accu) t
+    | [] -> accu in
+  aux 0 [] l
+    
+let mapi_tr f l = rev (rev_mapi f l)
+  
+let rec chop i l = match i, l with
+  | 0, l -> [], l
+  | i, h :: t -> (fun (fr, ba) -> h :: fr, ba) (chop (i - 1) t)
+  | _ -> invalid_arg "chop"
+      
+let rev_chop i l =
+  let rec aux i fr ba = match i, fr, ba with
+      0, fr, ba -> (fr, ba)
+    | i, fr, h :: t -> aux (i - 1) (h :: fr) t
+    | _ -> invalid_arg "rev_chop" in
+  aux i [] l
+    
+let chop_tr i l =
+  (fun (fr, ba) -> rev fr, ba) (rev_chop i l)
+    

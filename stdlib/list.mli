@@ -285,3 +285,21 @@ val count : ('a -> bool) -> 'a list -> int
 val positions : ('a -> bool) -> 'a list -> int list
 (** [positions pred l] returns a list of positions at which elements [e] of [l] make [pred e] true.  ex: [positions (fun x -> x > 2) [1; 3; 5; 2; 4]] returns [[1; 2; 4]] *)
 
+val mapi : (int -> 'a -> 'b) -> 'a list -> 'b list
+(** [mapi f l] works as [map], but the mapping function gets an extra argument with the index (0..List.length l-1) of the element getting mapped. *)
+
+val rev_mapi : (int -> 'a -> 'b) -> 'a list -> 'b list
+(** As [mapi] but output list generated in reverse order.  tail recursive *)
+
+val mapi_tr : (int -> 'a -> 'b) -> 'a list -> 'b list
+(** As [mapi] but tail-recursive.  *)
+
+val chop : int -> 'a list -> 'a list * 'a list
+(** [chop pos l] returns the prefix of l up to pos and the remaining elements of l *)
+
+val rev_chop : int -> 'a list -> 'a list * 'a list
+(** As [chop] but first list is generated and returned in reverse *)
+
+val chop_tr :  int -> 'a list -> 'a list * 'a list
+(** As [chop] but tail-recursive. *)
+
