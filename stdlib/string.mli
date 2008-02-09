@@ -152,6 +152,30 @@ val compare: t -> t -> int
     allows the module [String] to be passed as argument to the functors
     {!Set.Make} and {!Map.Make}. *)
 
+val init: int -> (int -> char) -> string
+(** [String.init n f] returns a fresh string of length [n] with the char at pos [i] produced by [f i] *)
+
+val map: (char -> char) -> string -> string
+(** As List.map but over the characters in a string *)
+
+val rev_map: (char -> char) -> string -> string
+(** [String.rev_map f s] is equivalent to [String.map f (String.reverse s)] (except String.reverse doesn't exist) *)
+
+val rev_iter: (char -> unit) -> string -> unit
+(** As [String.iter] but from right-to-left *)
+
+val fold_left: ('a -> char -> 'a) -> 'a -> string -> 'a
+(** As [List.fold_left], except operating over the characters in a string *)
+
+val fold_right: (char -> 'a -> 'a) -> string -> 'a -> 'a
+(** As [List.fold_right], except operating over the characters of a string *)
+
+val explode: string -> char list
+(** Simple conversion of a string to a list of its constituent characters *)
+
+val implode: char list -> string
+(** Simple conversion of a list of characters to the string with those characters in that order *)
+
 (**/**)
 
 external unsafe_get : string -> int -> char = "%string_unsafe_get"

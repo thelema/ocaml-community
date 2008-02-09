@@ -175,3 +175,44 @@ let contains s c = contains_from s 0 c;;
 type t = string
 
 let compare (x: t) (y: t) = Pervasives.compare x y
+
+(* String.create is a source of non-determinism in the OCaml stdlib. *)
+(*let create n = make n '\000' (* INCLUDE THIS? *) *)
+
+let init n f =
+  let s = make n (f 0) in
+  for i=1 to n-1 do
+    set s i (f i);
+  done;
+  s
+
+let map f s = init (length s) (fun i -> f (get s i))
+  
+let rev_map f s =
+  let n = length s in
+  init n (fun i -> f (get s (n - i - 1)))
+
+let rev_iter f s =
+  for i = length s - 1 downto 0 do
+    f (get s i)
+  done
+
+let fold_left f accu s =
+  let accu = ref accu in
+  for i = 0 to length s - 1 do
+    accu := f !accu (get s i)
+  done;
+  !accu
+
+let fold_right f s accu =
+  let accu = ref accu in
+  for i = length s - 1 downto 0 do
+    accu := f (get s i) !accu
+  done;
+  !accu
+
+let explode string =
+  fold_right List.cons string []
+
+let implode list =
+  concat "" (List.map (make 1) list) (* make more efficient? *)
