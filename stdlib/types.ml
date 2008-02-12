@@ -25,20 +25,20 @@ sig
   val equal : t -> t -> bool
 end
 
-module type Printable = 
+module type PrintableType = 
 sig
   type t
   val to_string : t -> string
 end
 
-module type Serializable = 
+module type SerializableType = 
 sig
   type t
   val to_string : t -> string
   val of_string : string -> t
 end
 
-module type Discrete = sig
+module type DiscreteType = sig
   type t
   val succ : t -> t
   val pred : t -> t
@@ -53,8 +53,8 @@ module type Discrete = sig
   val to_string : t -> string
 end
 
-module type Numeric = sig
-  include Discrete
+module type NumericType = sig
+  include DiscreteType
 
   val zero : t
   val one : t
