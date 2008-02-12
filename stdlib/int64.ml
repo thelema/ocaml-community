@@ -57,3 +57,12 @@ external float_of_bits : int64 -> float = "caml_int64_float_of_bits"
 type t = int64
 
 let compare (x: t) (y: t) = Pervasives.compare x y
+
+let modulo = rem
+
+let rec pow a n =
+  if n = zero then one
+  else if n = one then a
+  else
+    let b = pow a (shift_right n 1) in
+    mul b (if (logand n one) = zero then b else mul b a)

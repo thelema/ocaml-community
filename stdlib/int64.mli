@@ -177,6 +177,12 @@ val compare: t -> t -> int
     allows the module [Int64] to be passed as argument to the functors
     {!Set.Make} and {!Map.Make}. *)
 
+val modulo : int64 -> int64 -> int64
+(** Alias for [Int64.rem] *)
+
+val pow : int64 -> int64 -> int64
+(** [Int64.pow a n] calculates [a] raised to the power of [n] *)
+
 (**/**)
 
 (** {6 Deprecated functions} *)

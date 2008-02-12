@@ -52,6 +52,11 @@ external time : unit -> float = "caml_sys_time"
 (** Return the processor time, in seconds, used by the program
    since the beginning of execution. *)
 
+val time_f : ('a -> 'b) -> 'a -> (float * 'b)
+(** [time_f f a] evaluates [f a] and returns what it returns 
+    with the processor time difference before and after its 
+    execution. *)
+
 external chdir : string -> unit = "caml_sys_chdir"
 (** Change the current working directory of the process. *)
 

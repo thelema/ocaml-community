@@ -126,19 +126,3 @@ module Float = struct
   let of_string = float_of_string
   let to_string = string_of_float
 end
-
-module NumInt64 = struct
-  include Int64
-
-  let modulo = rem
-  let pow = generic_pow zero one (fun n -> shift_right n 1) (logand one) mul
-  let min_num, max_num = min_int, max_int
-  end
-
-module NumNativeint = struct
-  include Nativeint
-
-  let modulo = rem
-  let pow = generic_pow zero one (fun n -> shift_right n 1) (logand one) mul
-  let min_num, max_num = min_int, max_int
-end

@@ -172,6 +172,12 @@ val compare: t -> t -> int
     allows the module [Nativeint] to be passed as argument to the functors
     {!Set.Make} and {!Map.Make}. *)
 
+val modulo : nativeint -> nativeint -> nativeint
+(** Alias for [Nativeint.rem] *)
+
+val pow : nativeint -> nativeint -> nativeint
+(** [Nativeint.pow a n] calculates [a] raised to the power of [n] *)
+
 (**/**)
 
 (** {6 Deprecated functions} *)

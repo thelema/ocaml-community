@@ -34,7 +34,7 @@ OTHERS=array.cmo list.cmo char.cmo string.cmo sys.cmo \
   arg.cmo printexc.cmo gc.cmo \
   digest.cmo random.cmo callback.cmo \
   camlinternalOO.cmo oo.cmo camlinternalMod.cmo \
-  genlex.cmo weak.cmo \
+  genlex.cmo weak.cmo typestruct.cmo \
   lazy.cmo filename.cmo complex.cmo \
   arrayLabels.cmo listLabels.cmo stringLabels.cmo moreLabels.cmo stdLabels.cmo
 

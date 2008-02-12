@@ -102,5 +102,7 @@ stringLabels.cmo: string.cmi stringLabels.cmi
 stringLabels.cmx: string.cmx stringLabels.cmi 
 sys.cmo: sys.cmi 
 sys.cmx: sys.cmi 
+typestruct.cmo: typestruct.cmi
+typestruct.cmx: typestruct.cmi
 weak.cmo: sys.cmi obj.cmi hashtbl.cmi array.cmi weak.cmi 
 weak.cmx: sys.cmx obj.cmx hashtbl.cmx array.cmx weak.cmi 
