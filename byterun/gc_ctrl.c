@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: gc_ctrl.c,v 1.50.10.1 2007-11-20 18:27:06 doligez Exp $ */
+/* $Id$ */
 
 #include "alloc.h"
 #include "compact.h"
@@ -456,10 +456,6 @@ void caml_init_gc (uintnat minor_size, uintnat major_size,
                    uintnat percent_m)
 {
   uintnat major_heap_size = Bsize_wsize (norm_heapincr (major_size));
-
-#ifdef DEBUG
-  caml_gc_message (-1, "### O'Caml runtime: debug mode ###\n", 0);
-#endif
 
   caml_set_minor_heap_size (Bsize_wsize (norm_minsize (minor_size)));
   caml_major_heap_increment = Bsize_wsize (norm_heapincr (major_incr));
