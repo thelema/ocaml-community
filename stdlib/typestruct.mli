@@ -15,6 +15,8 @@ module type DiscreteType =
     val to_int : t -> int
     val of_string : string -> t
     val to_string : t -> string
+    val compare : t -> t -> int
+    val equal : t -> t -> bool
   end
 module type NumericType =
   sig
@@ -27,6 +29,8 @@ module type NumericType =
     val to_int : t -> int
     val of_string : string -> t
     val to_string : t -> string
+    val compare : t -> t -> int
+    val equal : t -> t -> bool
     val zero : t
     val one : t
     val neg : t -> t
@@ -37,8 +41,9 @@ module type NumericType =
     val div : t -> t -> t
     val modulo : t -> t -> t
     val pow : t -> t -> t
-    val compare : t -> t -> int
   end
+val generic_pow :
+  'a -> 'a -> ('a -> 'a) -> ('a -> 'a) -> ('a -> 'a -> 'a) -> 'a -> 'a -> 'a
 module Int :
   sig
     type t = int
@@ -57,8 +62,9 @@ module Int :
     val min_num : int
     val max_num : int
     val compare : int -> int -> int
-    val of_int : 'a -> 'a
-    val to_int : 'a -> 'a
+    val equal : int -> int -> bool
+    val of_int : int -> int
+    val to_int : int -> int
     val of_string : string -> int
     val to_string : int -> string
   end
@@ -80,6 +86,9 @@ module Float :
     val min_num : float
     val max_num : float
     val compare : 'a -> 'a -> int
+    val epsilon : float ref
+    val set_precision : float -> unit
+    val equal : float -> float -> bool
     val of_int : int -> float
     val to_int : float -> int
     val of_string : string -> float

@@ -9,6 +9,7 @@
 (*  under the terms of the GNU Library General Public License, with    *)
 (*  the special exception on linking described in file ../LICENSE.     *)
 (*                                                                     *)
+(* Portions (C) Edgar Friendly <thelema314@gmail.com>                  *)
 (***********************************************************************)
 
 (* $Id$ *)
@@ -34,6 +35,12 @@ external rename : string -> string -> unit = "caml_sys_rename"
 external getenv: string -> string = "caml_sys_getenv"
 external command: string -> int = "caml_sys_system_command"
 external time: unit -> float = "caml_sys_time"
+
+let time_f f x = 
+  let t0 = time () in
+  let fx = f x in
+  (time() -. t0, fx)
+
 external chdir: string -> unit = "caml_sys_chdir"
 external getcwd: unit -> string = "caml_sys_getcwd"
 external readdir : string -> string array = "caml_sys_read_directory"

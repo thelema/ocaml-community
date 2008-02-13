@@ -51,6 +51,9 @@ module type DiscreteType = sig
     
   val of_string : string -> t
   val to_string : t -> string
+
+  val compare : t -> t -> int
+  val equal : t -> t -> bool
 end
 
 module type NumericType = sig
@@ -69,8 +72,6 @@ module type NumericType = sig
 
   val modulo : t -> t -> t
   val pow : t -> t -> t
-
-  val compare : t -> t -> int
 end
 
 let generic_pow zero one div_two mod_two ( * ) =
@@ -93,13 +94,14 @@ module Int = struct
   let add, sub, mul, div = (+), (-), ( * ), (/)
 
   let modulo a b = a mod b
-  let pow = generic_pow 0 1 (fun n -> n / 2) (fun n -> n mod 2) ( * )
+  let pow = generic_pow 0 1 (fun n -> n asr 1) (fun n -> n land 1) ( * )
 
   let min_num, max_num = min_int, max_int
   let compare = (-)
+  let equal (a:int) b = a = b
 
-  let of_int n = n
-  let to_int n = n
+  let of_int (n:int) = n
+  let to_int (n:int) = n
   let of_string = int_of_string
   let to_string = string_of_int
 end
@@ -119,6 +121,9 @@ module Float = struct
 
   let min_num, max_num = neg_infinity, infinity
   let compare = compare
+  let epsilon = ref 0.00001
+  let set_precision e = epsilon := e
+  let equal a b = abs(b-.a) < !epsilon
     
   let of_int = float_of_int
   let to_int = int_of_float
