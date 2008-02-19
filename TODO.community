@@ -1,6 +1,29 @@
 
-* Ropes for strings + buffers
+* Ropes for strings + buffers (unicode)
 
-** regexes and rich string library over ropes
+** regexes and rich string library over ropes (PCRE?)
+
+** Immutable strings
 
 * Calendar library (TAI?)
+
+* Lazy lists
+
+* Unit testing
+
+* libbenchmark (currently only Sys.time_f)
+
+* DBI? postgres?
+
+* Everything from Extlib, Annexlib, missinglib, xstr
+
+* merge fileutils into stdlib 
+
+
+Difficult / wishlist
+--------------
+* auto-include any types from a .mli file into the corresponding .ml
+   file
+
+* Standard set of CamlP4 macros
+
