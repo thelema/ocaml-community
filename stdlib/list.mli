@@ -294,12 +294,28 @@ val rev_mapi : (int -> 'a -> 'b) -> 'a list -> 'b list
 val mapi_tr : (int -> 'a -> 'b) -> 'a list -> 'b list
 (** As [mapi] but tail-recursive.  *)
 
-val chop : int -> 'a list -> 'a list * 'a list
+val chop2 : int -> 'a list -> 'a list * 'a list
 (** [chop pos l] returns the prefix of l up to pos and the remaining elements of l *)
 
-val rev_chop : int -> 'a list -> 'a list * 'a list
+val rev_chop2 : int -> 'a list -> 'a list * 'a list
 (** As [chop] but first list is generated and returned in reverse *)
 
-val chop_tr :  int -> 'a list -> 'a list * 'a list
+val chop2_tr :  int -> 'a list -> 'a list * 'a list
 (** As [chop] but tail-recursive. *)
 
+
+val take : int -> 'a list -> 'a list
+  (** [take n l] returns up to the [n] first elements from list [l], if
+      available. *)
+  
+val drop : int -> 'a list -> 'a list
+  (** [drop n l] returns [l] without the first [n] elements, or the empty
+      list if [l] have less than [n] elements. *)
+  
+val takewhile : ('a -> bool) -> 'a list -> 'a list
+  (** [takewhile f xs] returns the first elements of list [xs]
+      which satisfy the predicate [f]. *)
+  
+val dropwhile : ('a -> bool) -> 'a list -> 'a list
+  (** [dropwhile f xs] returns the list [xs] with the first
+      elements satisfying the predicate [f] dropped. *)

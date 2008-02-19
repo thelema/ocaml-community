@@ -10,6 +10,9 @@
 (*  the special exception on linking described in file ../LICENSE.     *)
 (*                                                                     *)
 (*   (C) Flying Frog Consultancy Ltd., 2006                            *)
+(* portions lifted from Extlib                                         *)
+(* Copyright (C) 2003 Brian Hurt                                       *)
+(* Copyright (C) 2003 Nicolas Cannasse                                 *)
 (***********************************************************************)
 
 (* $Id$ *)
@@ -32,13 +35,40 @@ let tl = function
 
 let nth l n =
   if n < 0 then invalid_arg "List.nth" else
-  let rec nth_aux l n =
-    match l with
+  let rec nth_aux n = function
     | [] -> failwith "nth"
-    | a::l -> if n = 0 then a else nth_aux l (n-1)
-  in nth_aux l n
+    | a::t -> if n = 0 then a else nth_aux (n-1) t
+  in nth_aux n l
 
-let append = (@)
+
+(* FROM EXTLIB *)
+
+(* Thanks to Jacques Garrigue for suggesting the following structure *)
+type 'a mut_list =  {
+        hd: 'a; 
+        mutable tl: 'a list
+}
+external inj : 'a mut_list -> 'a list = "%identity"
+
+external magic : unit -> 'b = "%identity"
+
+let dummy_node () = { hd = magic (); tl = [] }
+
+let append l1 l2 =  (* EXTLIB *) 
+  match l1 with
+    | [] -> l2
+    | h :: t ->
+        let rec loop dst = function
+          | [] ->
+              dst.tl <- l2
+          | h :: t ->
+              let cell = { hd = h; tl = [] } in
+              dst.tl <- inj cell;
+              loop cell t
+        in
+        let r = { hd = h; tl = [] } in
+        loop r t;
+        inj r
 
 let rec rev_append l1 l2 =
   match l1 with
@@ -47,15 +77,37 @@ let rec rev_append l1 l2 =
 
 let rev l = rev_append l []
 
-let rec flatten = function
-    [] -> []
-  | l::r -> l @ flatten r
+let rec flatten l = 
+  let rec inner dst = function
+    | [] -> dst
+    | h :: t ->
+        let r = { hd = h; tl = [] } in
+        dst.tl <- inj r;
+        inner r t
+  in
+  let rec outer dst = function
+    | [] -> ()
+    | h :: t -> outer (inner dst h) t
+  in
+  let r = dummy_node () in
+  outer r l;
+  r.tl
 
 let concat = flatten
 
 let rec map f = function
-    [] -> []
-  | a::l -> let r = f a in r :: map f l
+  | [] -> []
+  | h :: t ->
+      let rec loop dst = function
+        | [] -> ()
+        | h :: t ->
+            let r = { hd = f h; tl = [] } in
+            dst.tl <- inj r;
+            loop r t
+      in
+      let r = { hd = f h; tl = [] } in
+      loop r t;
+      inj r
 
 let rev_map f l =
   let rec rmap_f accu = function
@@ -385,18 +437,46 @@ let rev_mapi f l =
     
 let mapi_tr f l = rev (rev_mapi f l)
   
-let rec chop i l = match i, l with
+let rec chop2 i l = match i, l with
   | 0, l -> [], l
-  | i, h :: t -> (fun (fr, ba) -> h :: fr, ba) (chop (i - 1) t)
-  | _ -> invalid_arg "chop"
+  | i, h :: t -> (fun (fr, ba) -> h :: fr, ba) (chop2 (i - 1) t)
+  | _ -> invalid_arg "chop2"
       
-let rev_chop i l =
+let rev_chop2 i l =
   let rec aux i fr ba = match i, fr, ba with
       0, fr, ba -> (fr, ba)
     | i, fr, h :: t -> aux (i - 1) (h :: fr) t
-    | _ -> invalid_arg "rev_chop" in
+    | _ -> invalid_arg "rev_chop2" in
   aux i [] l
     
-let chop_tr i l =
-  (fun (fr, ba) -> rev fr, ba) (rev_chop i l)
-    
+let chop2_tr i l =
+  (fun (fr, ba) -> rev fr, ba) (rev_chop2 i l)
+
+
+(***** EXTLIB ********)
+
+let take n l =
+        let rec loop n dst = function
+                | h :: t when n > 0 ->
+                        let r = { hd = h; tl = [] } in
+                        dst.tl <- inj r;
+                        loop (n-1) r t
+                | _ ->
+                        ()
+        in
+        let dummy = dummy_node() in
+        loop n dummy l;
+        dummy.tl
+
+let drop = chop
+
+(* takewhile and dropwhile by Richard W.M. Jones. *)
+let rec takewhile f = function
+  | [] -> []
+  | x :: xs when f x -> x :: takewhile f xs
+  | _ -> []
+
+let rec dropwhile f = function
+  | [] -> []
+  | x :: xs when f x -> dropwhile f xs
+  | xs -> xs
