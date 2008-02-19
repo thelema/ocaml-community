@@ -176,6 +176,9 @@ val explode: string -> char list
 val implode: char list -> string
 (** Simple conversion of a list of characters to the string with those characters in that order *)
 
+val of_list : ('a -> string) -> 'a list -> string
+(** [String.of_list f l] converts the list [l] into a string through helper function [f] to turn each element into a string. *)
+
 (**/**)
 
 external unsafe_get : string -> int -> char = "%string_unsafe_get"

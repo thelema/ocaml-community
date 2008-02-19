@@ -78,6 +78,10 @@ let concat sep l =
         tl;
       r
 
+let of_list string_of l =
+  "["^concat "; " (List.map string_of l)^"]"
+
+
 external is_printable: char -> bool = "caml_is_printable"
 external char_code: char -> int = "%identity"
 external char_chr: int -> char = "%identity"
