@@ -4,12 +4,12 @@
 (*                                                                     *)
 (*            Edgar Friendly <thelema314@gmail.com>                    *)
 (*                                                                     *)
-(*  Copyright 2008 Edgar Friendly.                                     *)
+(* Copyright 2008 Edgar Friendly.                                      *)
+(* Copyright 2008 <bluestorm dot dylc on-the-server gmail dot com>     *)
 (*                   All rights reserved.  This file is distributed    *)
 (*  under the terms of the GNU Library General Public License, with    *)
 (*  the special exception on linking described in file ../LICENSE.     *)
 (*                                                                     *)
-(* Copyright 2008 <bluestorm dot dylc on-the-server gmail dot com>     *)
 (***********************************************************************)
 
 module type OrderedType =
