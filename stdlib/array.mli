@@ -210,6 +210,69 @@ val fold_left2 : ('a -> 'b -> 'c -> 'a) -> 'a -> 'b array -> 'c array -> 'a
 val fold_right2 : ('a -> 'b -> 'c -> 'c) -> 'a array -> 'b array -> 'c -> 'c
 (** as [fold_left2] but starts at the right-hand end of the array *)
 
+  val rev : 'a array -> 'a array
+    (** Array reversal. *)
+
+  val rev_in_place : 'a array -> unit
+    (** In-place array reversal.  The array argument is updated. *)
+
+  val iter2 : ('a -> 'b -> unit) -> 'a array -> 'b array -> unit
+    (** [Array.iter2 f [|a1; ...; an|] [|b1; ...; bn|]] performs
+    calls [f a1 b1; ...; f an bn] in that order.
+    
+    @raise Invalid_argument if the length of [a1] does not equal the
+    length of [a2]. *)
+
+  val for_all : ('a -> bool) -> 'a array -> bool
+    (** [for_all p [a1; ...; an]] checks if all elements of the array
+        satisfy the predicate [p].  That is, it returns
+        [ (p a1) && (p a2) && ... && (p an)].
+    *)
+
+  val exists : ('a -> bool) -> 'a array -> bool
+    (** [exists p [a1; ...; an]] checks if at least one element of
+        the array satisfies the predicate [p].  That is, it returns
+        [ (p a1) || (p a2) || ... || (p an)].
+    *)
+
+  val mem : 'a -> 'a array -> bool
+    (** [mem m a] is true if and only if [m] is equal to an element of [a]. *)
+
+  val memq : 'a -> 'a array -> bool
+    (** Same as {!Array.mem} but uses physical equality instead of
+        structural equality to compare array elements.
+    *)
+
+  val find : ('a -> bool) -> 'a array -> 'a
+    (** [find p a] returns the first element of array [a]
+        that satisfies the predicate [p].
+        Raise [Not_found] if there is no value that satisfies [p] in the
+        array [a].
+    *)
+
+  val findi : ('a -> bool) -> 'a array -> int
+    (** [findi p a] returns the index of the first element of array [a]
+        that satisfies the predicate [p].
+        Raise [Not_found] if there is no value that satisfies [p] in the
+        array [a].
+    *)
+
+(* WAITING FOR PREREQUISITE ON IMPLEMENTATION
+  val filter : ('a -> bool) -> 'a array -> 'a array
+    (** [filter p a] returns all the elements of the array [a]
+        that satisfy the predicate [p].  The order of the elements
+        in the input array is preserved.  *)
+
+  val find_all : ('a -> bool) -> 'a array -> 'a array
+    (** [find_all] is another name for {!Array.filter}. *)
+
+  val partition : ('a -> bool) -> 'a array -> 'a array * 'a array
+    (** [partition p a] returns a pair of arrays [(a1, a2)], where
+        [a1] is the array of all the elements of [a] that
+        satisfy the predicate [p], and [a2] is the array of all the
+        elements of [a] that do not satisfy [p].
+        The order of the elements in the input array is preserved. *)
+*)
 
 (**/**)
 (** {6 Undocumented functions} *)
