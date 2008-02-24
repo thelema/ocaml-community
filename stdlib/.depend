@@ -82,6 +82,8 @@ random.cmo: string.cmi pervasives.cmi nativeint.cmi int64.cmi int32.cmi \
     digest.cmi char.cmi array.cmi random.cmi 
 random.cmx: string.cmx pervasives.cmx nativeint.cmx int64.cmx int32.cmx \
     digest.cmx char.cmx array.cmx random.cmi 
+rope.cmo: string.cmi array.cmi rope.cmi
+rope.cmx: string.cmx array.cmx rope.cmi
 scanf.cmo: string.cmi printf.cmi obj.cmi list.cmi hashtbl.cmi buffer.cmi \
     array.cmi scanf.cmi 
 scanf.cmx: string.cmx printf.cmx obj.cmx list.cmx hashtbl.cmx buffer.cmx \
