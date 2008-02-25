@@ -14,6 +14,8 @@ array.cmo: array.cmi
 array.cmx: array.cmi 
 arrayLabels.cmo: array.cmi arrayLabels.cmi 
 arrayLabels.cmx: array.cmx arrayLabels.cmi 
+bitSet.cmo: bitSet.cmi
+bitSet.cmx: bitSet.cmi
 buffer.cmo: sys.cmi string.cmi buffer.cmi 
 buffer.cmx: sys.cmx string.cmx buffer.cmi 
 callback.cmo: obj.cmi callback.cmi 

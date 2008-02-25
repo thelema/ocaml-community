@@ -20,13 +20,13 @@
 
 type intern
 
-let bcreate : int -> intern = Obj.magic String.create
+external bcreate : int -> intern = "caml_create_string"
 external fast_get : intern -> int -> int = "%string_unsafe_get"
 external fast_set : intern -> int -> int -> unit = "%string_unsafe_set"
 external fast_bool : int -> bool = "%identity"
-let fast_blit : intern -> int -> intern -> int -> int -> unit = Obj.magic String.blit
-let fast_fill : intern -> int -> int -> int -> unit = Obj.magic String.fill
-let fast_length : intern -> int= Obj.magic String.length
+external fast_blit : intern -> int -> intern -> int -> int -> unit =  "caml_blit_string" "noalloc"
+external fast_fill : intern -> int -> int -> int -> unit = "caml_fill_string" "noalloc"
+external fast_length : intern -> int = "%string_length"
 
 let bget s ndx =
   assert (ndx >= 0 && ndx < fast_length s);
@@ -228,7 +228,7 @@ let find_first_set b n =
       else
         Some ((find_lsb byte) + (byte_ndx lsl log_int_size) + bit_offs) in
   find_bit (n lsr log_int_size) (n land int_size)
-      
+(*      
 let enum t =
   let rec make n =
     let cur = ref n in
@@ -245,7 +245,7 @@ let enum t =
       ~clone:(fun () -> make !cur)
   in
   make 0
-
+*)
 let raw_create size = 
   let b = bcreate size in
   bfill b 0 size 0;
