@@ -191,12 +191,8 @@ val rangeiter : ('a -> unit) -> int -> int -> 'a t -> unit
       from an explicit loop using [get].
       Raises Out_of_bounds in the same cases as [sub]. *)
 
-val fold_left : ('b -> 'a -> 'b ) -> 'b -> 'a t -> 'b
-  (** [fold_left f a r] computes [ f (... (f (f a r0) r1)...) rN-1 ]
-      where [rn = Vect.get n r ] and [N = length r]. *)
-
-val fold_right : ('a -> 'b -> 'b ) -> 'a t -> 'b -> 'b
-  (** [fold_right f r a] computes [ f (r0 ... (f rN-2 (f rN-1 a)) ...)) ]
+val fold : ('b -> 'a -> 'b ) -> 'b -> 'a t -> 'b
+  (** [fold f a r] computes [ f (... (f (f a r0) r1)...) rN-1 ]
       where [rn = Vect.get n r ] and [N = length r]. *)
 
 val map : ('a -> 'b) -> 'a t -> 'b t
@@ -204,6 +200,7 @@ val map : ('a -> 'b) -> 'a t -> 'b t
     [i] equals [f (get v i)]. Therefore, the height of the returned vect
     is the same as that of the original one. Operates in [O(n)] time. *)
 
+(* NOT PROVIDED?
 val id_map : ('a -> 'a) -> 'a t -> 'a t
   (** [id_map f v] returns a vect isomorphic to [v] where each element of index
       [i] equals [f (get v i)]. It is very similar to [map], but tries to share
@@ -212,7 +209,7 @@ val id_map : ('a -> 'a) -> 'a t -> 'a t
       if [f] leaves many values unmodified.
       For each element, the new value [f x] and the old one [x] are compared
       with [<>].  Operates in [O(n)] time. *)
-
+*)
 
 val filter : ('a -> bool) -> 'a t -> 'a t
   (** [filter f v] returns a vect with the elements [x] from [v] such that
@@ -356,19 +353,21 @@ sig
     from an explicit loop using [get].
     Raises Out_of_bounds in the same cases as [sub]. *)
 
-  val fold_left : ('b -> 'a -> 'b ) -> 'b -> 'a t -> 'b
+  val fold : ('b -> 'a -> 'b ) -> 'b -> 'a t -> 'b
   (** [fold_left f a r] computes [ f (... (f (f a r0) r1)...) rN-1 ]
     where [rn = Vect.get n r ] and [N = length r]. *)
 
+(* NOT PROVIDED?
   val fold_right : ('a -> 'b -> 'b ) -> 'a t -> 'b -> 'b
   (** [fold_right f r a] computes [ f (r0 ... (f rN-2 (f rN-1 a)) ...)) ]
       where [rn = Vect.get n r ] and [N = length r]. *)
+*)
 
   val map : ('a -> 'b) -> 'a t -> 'b t
   (** [map f v] returns a vect isomorphic to [v] where each element of index
       [i] equals [f (get v i)]. Therefore, the height of the returned vect
       is the same as that of the original one. Operates in [O(n)] time. *)
-
+(* NOT PROVIDED?
   val id_map : ('a -> 'a) -> 'a t -> 'a t
   (** [id_map f v] returns a vect isomorphic to [v] where each element of index
       [i] equals [f (get v i)]. It is very similar to [map], but tries to share
@@ -377,7 +376,7 @@ sig
       if [f] leaves many values unmodified.
       For each element, the new value [f x] and the old one [x] are compared
       with [<>].  Operates in [O(n)] time. *)
-
+*)
   val filter : ('a -> bool) -> 'a t -> 'a t
   (** [filter f v] returns a vect with the elements [x] from [v] such that
       [f x] returns [true]. Operates in [O(n)] time. *)

@@ -364,25 +364,30 @@ let rec destructive_set i v = function
       if i < cl then destructive_set i v l
       else destructive_set (i - cl) v r
 
+
+
 (* Functorial interface *)
 
-module Make(RANDOMACCESS : sig
-              type 'a t
-              val empty : 'a t
-              val get : 'a t -> int -> 'a
-              val unsafe_get : 'a t -> int -> 'a
-              val set : 'a t -> int -> 'a -> unit
-              val unsafe_set : 'a t -> int -> 'a -> unit
-              val append : 'a t -> 'a t -> 'a t
-              val concat : 'a t list -> 'a t
-              val length : 'a t -> int
-              val copy : 'a t -> 'a t
-              val sub : 'a t -> int -> int -> 'a t
-              val make : int -> 'a -> 'a t
-              val iter : ('a -> unit) -> 'a t -> unit
-              val map : ('a -> 'b) -> 'a t -> 'b t
-              val fold_right : ('a -> 'b -> 'b) -> 'a t -> 'b -> 'b
-            end)
+module type RANDOMACCESS =
+sig
+  type 'a t
+  val empty : 'a t
+  val get : 'a t -> int -> 'a
+  val unsafe_get : 'a t -> int -> 'a
+  val set : 'a t -> int -> 'a -> unit
+  val unsafe_set : 'a t -> int -> 'a -> unit
+  val append : 'a t -> 'a t -> 'a t
+  val concat : 'a t list -> 'a t
+  val length : 'a t -> int
+  val copy : 'a t -> 'a t
+  val sub : 'a t -> int -> int -> 'a t
+  val make : int -> 'a -> 'a t
+  val iter : ('a -> unit) -> 'a t -> unit
+  val map : ('a -> 'b) -> 'a t -> 'b t
+  val fold_right : ('a -> 'b -> 'b) -> 'a t -> 'b -> 'b
+end
+
+module Make(RANDOMACCESS : RANDOMACCESS)
            (PARAM : sig
                val max_height : int
                val leaf_size : int

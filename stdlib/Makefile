@@ -26,7 +26,7 @@ CAMLDEP=../boot/ocamlrun ../tools/ocamldep
 
 OBJS=pervasives.cmo $(OTHERS)
 OTHERS=array.cmo list.cmo char.cmo string.cmo rope.cmo sys.cmo \
-  hashtbl.cmo sort.cmo marshal.cmo obj.cmo \
+  hashtbl.cmo vect.cmo sort.cmo marshal.cmo obj.cmo \
   int32.cmo int64.cmo nativeint.cmo \
   lexing.cmo parsing.cmo \
   set.cmo map.cmo stack.cmo queue.cmo stream.cmo buffer.cmo \
