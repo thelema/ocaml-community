@@ -56,16 +56,21 @@ let rec search_head s i =
   if n < 0x80 || n >= 0xc2 then i else
   search_head s (i + 1)
 
+  let length0 n  =
+    if n < 0x80 then 1 else
+    if n < 0xc0 then invalid_arg "UTF8.length0 - Mid" else
+    if n < 0xe0 then 2 else
+    if n < 0xf0 then 3 else
+    if n < 0xf8 then 4 else
+    if n < 0xfc then 5 else
+    if n < 0xfe then 6 else
+    invalid_arg "UTF8.length0" 
+
 let next s i = 
   let n = Char.code s.[i] in
-  if n < 0x80 then i + 1 else
-  if n < 0xc0 then search_head s (i + 1) else
-  if n <= 0xdf then i + 2
-  else if n <= 0xef then i + 3
-  else if n <= 0xf7 then i + 4
-  else if n <= 0xfb then i + 5
-  else if n <= 0xfd then i + 6
-  else invalid_arg "UTF8.next"
+  try i + (length0 n)
+  with Invalid_argument "UTF8.length0 - Mid" -> search_head s (i+1)
+    | Invalid_argument _ -> invalid_arg "UTF8.next"
 
 let rec search_head_backward s i =
   if i < 0 then -1 else
@@ -99,57 +104,88 @@ let compare_index _ i j = i - j
 
 let get s n = look s (nth s n)
 
-let add_uchar buf u =
+let unsafe_get = get
+
+let of_char u = 
   let masq = 0b111111 in
   let k = UChar.uint_code u in
   if k < 0 || k >= 0x4000000 then begin
-    Buffer.add_char buf (Char.chr (0xfc + (k lsr 30)));
-    Buffer.add_char buf (Char.unsafe_chr (0x80 lor ((k lsr 24) land masq))); 
-    Buffer.add_char buf (Char.unsafe_chr (0x80 lor ((k lsr 18) land masq)));
-    Buffer.add_char buf (Char.unsafe_chr (0x80 lor ((k lsr 12) land masq)));
-    Buffer.add_char buf (Char.unsafe_chr (0x80 lor ((k lsr 6) land masq)));
-    Buffer.add_char buf (Char.unsafe_chr (0x80 lor (k land masq)));
+    let s = String.create 6 in
+    s.[0] <- (Char.chr (0xfc + (k lsr 30)));
+    s.[1] <- (Char.unsafe_chr (0x80 lor ((k lsr 24) land masq))); 
+    s.[2] <- (Char.unsafe_chr (0x80 lor ((k lsr 18) land masq)));
+    s.[3] <- (Char.unsafe_chr (0x80 lor ((k lsr 12) land masq)));
+    s.[4] <- (Char.unsafe_chr (0x80 lor ((k lsr 6) land masq)));
+    s.[5] <- (Char.unsafe_chr (0x80 lor (k land masq)));
+    s
   end else if k <= 0x7f then
-    Buffer.add_char buf (Char.unsafe_chr k)
+    String.make 1 (Char.unsafe_chr k)
   else if k <= 0x7ff then begin
-    Buffer.add_char buf (Char.unsafe_chr (0xc0 lor (k lsr 6)));
-    Buffer.add_char buf (Char.unsafe_chr (0x80 lor (k land masq)))
+    let s = String.create 2 in
+    s.[0] <- (Char.unsafe_chr (0xc0 lor (k lsr 6)));
+    s.[1] <- (Char.unsafe_chr (0x80 lor (k land masq)));
+    s
   end else if k <= 0xffff then begin
-    Buffer.add_char buf (Char.unsafe_chr (0xe0 lor (k lsr 12)));
-    Buffer.add_char buf (Char.unsafe_chr (0x80 lor ((k lsr 6) land masq)));
-    Buffer.add_char buf (Char.unsafe_chr (0x80 lor (k land masq)));
+    let s = String.create 3 in
+    s.[0] <- (Char.unsafe_chr (0xe0 lor (k lsr 12)));
+    s.[1] <- (Char.unsafe_chr (0x80 lor ((k lsr 6) land masq)));
+    s.[2] <- (Char.unsafe_chr (0x80 lor (k land masq)));
+    s
   end else if k <= 0x1fffff then begin
-    Buffer.add_char buf (Char.unsafe_chr (0xf0 + (k lsr 18)));
-    Buffer.add_char buf (Char.unsafe_chr (0x80 lor ((k lsr 12) land masq)));
-    Buffer.add_char buf (Char.unsafe_chr (0x80 lor ((k lsr 6) land masq)));
-    Buffer.add_char buf (Char.unsafe_chr (0x80 lor (k land masq)));
+    let s = String.create 4 in
+    s.[0] <- (Char.unsafe_chr (0xf0 + (k lsr 18)));
+    s.[1] <- (Char.unsafe_chr (0x80 lor ((k lsr 12) land masq)));
+    s.[2] <- (Char.unsafe_chr (0x80 lor ((k lsr 6) land masq)));
+    s.[3] <- (Char.unsafe_chr (0x80 lor (k land masq)));
+    s
   end else begin
-    Buffer.add_char buf (Char.unsafe_chr (0xf8 + (k lsr 24)));
-    Buffer.add_char buf (Char.unsafe_chr (0x80 lor ((k lsr 18) land masq)));
-    Buffer.add_char buf (Char.unsafe_chr (0x80 lor ((k lsr 12) land masq)));
-    Buffer.add_char buf (Char.unsafe_chr (0x80 lor ((k lsr 6) land masq)));
-    Buffer.add_char buf (Char.unsafe_chr (0x80 lor (k land masq)));
+    let s = String.create 5 in
+    s.[0] <- (Char.unsafe_chr (0xf8 + (k lsr 24)));
+    s.[1] <- (Char.unsafe_chr (0x80 lor ((k lsr 18) land masq)));
+    s.[2] <- (Char.unsafe_chr (0x80 lor ((k lsr 12) land masq)));
+    s.[3] <- (Char.unsafe_chr (0x80 lor ((k lsr 6) land masq)));
+    s.[4] <- (Char.unsafe_chr (0x80 lor (k land masq)));
+    s
   end 
+    
+let make i c = 
+  if i = 1 then of_char c
+  else 
+    let s0 = of_char c in
+    let l0 = String.length s0 in
+    let s = String.create (i * l0) in
+    for j = 0 to i-1 do
+      String.blit s0 0 s (j * l0) l0
+    done;
+    s
+    
+let copy_set s n c = 
+  let i = nth s n in let j = next s i in
+  String.splice s i (j-i) (of_char c)
 
-let init len f =
-  let buf = Buffer.create len in
-  for c = 0 to len - 1 do add_uchar buf (f c) done;
-  Buffer.contents buf
+let unsafe_buf_set s e n c = 
+  let s1 = of_char c and i = nth s n in 
+  let j = next s i 
+  and j' = i + String.length s1 in
+  let e' = e - j + j'  in
+  if e' > String.length s then failwith "Buffer too small";
+  String.blit s j s j' (e-j);
+  String.blit s1 0 s i (String.length s1);
+  e'
 
+let sub s n len =
+  let i = nth s n in 
+  let j = move s i len in
+  String.sub s i (j-i)
+
+let length_at s i = 
+  let n = Char.code (String.unsafe_get s i) in
+  length0 n
 
 let rec length_aux s c i =
   if i >= String.length s then c else
-  let n = Char.code (String.unsafe_get s i) in
-  let k =
-    if n < 0x80 then 1 else
-    if n < 0xc0 then invalid_arg "UTF8.length" else
-    if n < 0xe0 then 2 else
-    if n < 0xf0 then 3 else
-    if n < 0xf8 then 4 else
-    if n < 0xfc then 5 else
-    if n < 0xfe then 6 else
-    invalid_arg "UTF8.length" in
-  length_aux s (c + 1) (i + k)
+    let k = length_at s i in
+    length_aux s (c + 1) (i + k)
 
 let length s = length_aux s 0 0
 
@@ -162,6 +198,8 @@ let rec iter_aux proc s i =
 let iter proc s = iter_aux proc s 0
 
 let compare s1 s2 = Pervasives.compare s1 s2
+
+let copy = String.copy
 
 exception Malformed_code
 
@@ -195,10 +233,3 @@ let validate s =
       main (i + 6)
     else raise Malformed_code in
   main 0
-
-module Buf = 
-  struct
-    include Buffer
-    type buf = t
-    let add_char = add_uchar
-  end

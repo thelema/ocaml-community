@@ -51,7 +51,7 @@ let str_append = (^)
 let empty_str = ""
 let string_of_string_list l = String.concat "" l
 
-module STRING = String
+module STRING = UTF8
 
 (* 48 limits max rope size to 220GB on 64 bit,
  * ~ 700MB on 32bit (length fields overflow after that) *)
@@ -61,7 +61,7 @@ let max_height = 48
  * the code assumes it's an even num.
  * 256 gives up to a 50% overhead in the worst case (all leaf nodes near
  * half-filled *)
-let leaf_size = 256
+let leaf_size = 256 (* utf-8 characters, not bytes *)
 (* =end *)
 
 (* =begin code *)
@@ -208,9 +208,8 @@ let rec set i v = function
     Empty -> raise Out_of_bounds
   | Leaf s ->
       if i >= 0 && i < STRING.length s then
-        let s = STRING.copy s in
-          STRING.unsafe_set s i v;
-          Leaf s
+	let s = STRING.copy_set s i v in
+        Leaf s
       else raise Out_of_bounds
   | Concat(l, cl, r, cr, _) ->
       if i < cl then concat (set i v l) r
@@ -298,6 +297,11 @@ let iteri f r =
   | Concat(l,cl,r,_,_) -> aux f i l; aux f (i + cl) r
   in
     aux f 0 r
+
+let rec bulk_iter f = function
+    Empty -> ()
+  | Leaf s -> f s
+  | Concat(l,_,r,_,_) -> iter f l; iter f r
 
 let rec rangeiter f start len = function
     Empty -> if start <> 0 || len <> 0 then raise Out_of_bounds

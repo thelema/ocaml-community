@@ -176,6 +176,9 @@ val explode: string -> char list
 val implode: char list -> string
 (** Simple conversion of a list of characters to the string with those characters in that order *)
 
+val splice: string -> int -> int -> string -> string
+(** [String.splice s off len rep] cuts out the section of [s] indicated by [off] and [len] and replaces it by [rep] *)
+
 (**/**)
 
 external unsafe_get : string -> int -> char = "%string_unsafe_get"

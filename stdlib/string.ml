@@ -216,3 +216,12 @@ let explode string =
 
 let implode list =
   concat "" (List.map (make 1) list) (* make more efficient? *)
+
+let splice s1 off len s2 = 
+  let len1 = length s1 and len2 = length s2 in
+  let out_len = len1 - len + len2 in
+  let s = create out_len in
+  blit s1 0 s 0 off; (* s1 before splice point *)
+  blit s2 0 s off len2; (* s2 at splice point *)
+  blit s1 (off+len) s (off+len2) (len1 - (off+len)); (* s1 after off+len *)
+  s

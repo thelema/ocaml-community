@@ -40,10 +40,14 @@ val validate : t -> unit
    The call requires O(n)-time. *)
 val get : t -> int -> UChar.t
 
-(** [init len f] 
-   returns a new string which contains [len] Unicode characters.
-   The i-th Unicode character is initialized by [f i] *)
-val init : int -> (int -> UChar.t) -> t
+val unsafe_get : t -> int -> UChar.t
+val unsafe_buf_set : t -> int -> int -> UChar.t -> int
+
+val copy : t -> t
+val copy_set : t -> int -> UChar.t -> t
+val sub : t -> int -> int -> t
+
+val make : int -> UChar.t -> t
 
 (** [length s] returns the number of Unicode characters contained in s *)
 val length : t -> int
@@ -51,6 +55,8 @@ val length : t -> int
 (** Positions in the string represented by the number of bytes from the head.
    The location of the first character is [0] *)
 type index = int
+
+val length_at : t -> index -> int
 
 (** [nth s n] returns the position of the [n]-th Unicode character. 
    The call requires O(n)-time *)
@@ -112,33 +118,3 @@ val iter : (UChar.t -> unit) -> t -> unit
    0 if [s1] = [s2],
    a negative integer if [s1] < [s2]. *)
 val compare : t -> t -> int
-
-(** Buffer module for UTF-8 strings *)
-module Buf : sig
-  (** Buffers for UTF-8 strings. *) 
-  type buf
-
-  (** [create n] creates the buffer with the initial size [n]-bytes. *)   
-  val create : int -> buf
-
-  (* The rest of functions is similar to the ones of Buffer in stdlib. *)
-  (** [contents buf] returns the contents of the buffer. *)
-  val contents : buf -> t
-
-  (** Empty the buffer, 
-     but retains the internal storage which was holding the contents *)
-  val clear : buf -> unit
-
-  (** Empty the buffer and de-allocate the internal storage. *)
-  val reset : buf -> unit
-
-  (** Add one Unicode character to the buffer. *)
-  val add_char : buf -> UChar.t -> unit
-
-  (** Add the UTF-8 string to the buffer. *)
-  val add_string : buf -> t -> unit
-
-  (** [add_buffer b1 b2] adds the contents of [b2] to [b1].
-     The contents of [b2] is not changed. *)
-  val add_buffer : buf -> buf -> unit
-end with type buf = Buffer.t
