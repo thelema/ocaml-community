@@ -13,6 +13,7 @@
 (* portions lifted from Extlib                                         *)
 (* Copyright (C) 2003 Brian Hurt                                       *)
 (* Copyright (C) 2003 Nicolas Cannasse                                 *)
+(* Copyright 2008 <bluestorm dot dylc on-the-server gmail dot com>     *)
 (***********************************************************************)
 
 (* $Id$ *)
@@ -127,7 +128,33 @@ let rec fold_left f accu l =
   | a::l -> fold_left f (f accu a) l
 
 let fold_right_max = 1000
-  
+let fold_right_chunk_size = 100
+
+let fold_right f li init =
+  let rec fold acc = function
+  | [] -> acc
+  | hd::tl -> fold (f hd acc) tl in
+  let rec fold_chunk li =
+    let (n, init) = jump 0 li in
+    let res = fold init (take [] li n) in
+(*     Gc.minor (); *)
+    res
+  and jump n = function
+  | [] -> (n, init)
+  | _::tl when n < fold_right_chunk_size -> jump (n + 1) tl
+  | li -> (n, fold_chunk li)
+  and take acc li = function
+  | 0 -> acc
+  | n -> match li with
+         | [] -> assert false
+         | hd::tl -> take (hd::acc) tl (n - 1) in
+  let rec loop n = function
+  | [] -> init
+  | h :: t when n < fold_right_max -> f h (loop (n+1) t)
+  | li -> fold_chunk li
+  in loop 0 li
+
+
 let fold_right f l init =
         let rec tail_loop acc = function
                 | [] -> acc
@@ -587,7 +614,7 @@ let rec dropwhile f = function
 let reduce f l = fold_left f (hd l) (tl l)
 
 let make i x =
-  if i < 0 then invalid_arg "ExtList.List.make";
+  if i < 0 then invalid_arg "List.make";
   let rec make' x = function
     | 0 -> []
     | i -> x :: make' x (i-1)
