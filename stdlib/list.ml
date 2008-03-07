@@ -96,7 +96,7 @@ let rec flatten l =
 
 let concat = flatten
 
-let rec map f = function
+let map f = function
   | [] -> []
   | h :: t ->
       let rec loop dst = function
@@ -108,6 +108,20 @@ let rec map f = function
       in
       let r = { hd = f h; tl = [] } in
       loop r t;
+      inj r
+
+let mapi f = function
+  | [] -> []
+  | h :: t ->
+      let rec loop n dst = function
+        | [] -> ()
+        | h :: t ->
+            let r = { hd = f n h; tl = [] } in
+            dst.tl <- inj r;
+            loop (n+1) r t
+      in
+      let r = { hd = f 0 h; tl = [] } in
+      loop 1 r t;
       inj r
 
 let rev_map f l =
@@ -128,33 +142,27 @@ let rec fold_left f accu l =
   | a::l -> fold_left f (f accu a) l
 
 let fold_right_max = 1000
-let fold_right_chunk_size = 100
+let fold_right_chunk_size = 500
 
 let fold_right f li init =
-  let rec fold acc = function
-  | [] -> acc
-  | hd::tl -> fold (f hd acc) tl in
   let rec fold_chunk li =
     let (n, init) = jump 0 li in
-    let res = fold init (take [] li n) in
-(*     Gc.minor (); *)
-    res
+    partial_fold init li n
   and jump n = function
-  | [] -> (n, init)
-  | _::tl when n < fold_right_chunk_size -> jump (n + 1) tl
-  | li -> (n, fold_chunk li)
-  and take acc li = function
-  | 0 -> acc
-  | n -> match li with
-         | [] -> assert false
-         | hd::tl -> take (hd::acc) tl (n - 1) in
+    | [] -> (n, init)
+    | _::tl when n < fold_right_chunk_size -> jump (n + 1) tl
+    | li -> (n, fold_chunk li)
+  and partial_fold partial_init li = function
+    | 0 -> partial_init
+    | n -> match li with
+        | [] -> assert false
+        | hd::tl -> f hd (partial_fold partial_init tl (n -1))  in
   let rec loop n = function
-  | [] -> init
-  | h :: t when n < fold_right_max -> f h (loop (n+1) t)
-  | li -> fold_chunk li
+    | [] -> init
+    | h :: t when n < fold_right_max -> f h (loop (n+1) t)
+    | li -> fold_chunk li
   in loop 0 li
-
-
+       
 let fold_right f l init =
         let rec tail_loop acc = function
                 | [] -> acc
@@ -549,20 +557,6 @@ let positions pred l =
   let aux (i, is) e = i + 1, if pred e then i :: is else is in
   rev (snd (fold_left aux (0, []) l))
 
-let mapi f l =
-  let rec aux n = function
-      h :: t -> let h = f n h in h :: aux (n + 1) t
-    | [] -> [] in
-  aux 0 l
-    
-let rev_mapi f l =
-  let rec aux n accu = function
-      h :: t -> aux (n + 1) (f n h :: accu) t
-    | [] -> accu in
-  aux 0 [] l
-    
-let mapi_tr f l = rev (rev_mapi f l)
-  
 let split_nth index = function
   | [] -> if index = 0 then [],[] else invalid_arg "List.split_nth"
   | (h :: t as l) ->
@@ -698,3 +692,6 @@ let rec last = function
   | [] -> invalid_arg "List.last"
   | h :: [] -> h
   | _ :: t -> last t
+
+(* in pervasives?  3 List.-- 5 doesn't have the ring that 3--5 has.  Also, right endpoint version?  --]?  *)
+let rec (--) = fun m n -> if m >= n then [] else m::((m + 1) -- n)

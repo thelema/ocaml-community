@@ -290,12 +290,6 @@ val mapi : (int -> 'a -> 'b) -> 'a list -> 'b list
     [(f 0 a0);(f 1 a1) ... (f n an)] where [a0..an] are the elements of
     the list [l]. *)
 
-val rev_mapi : (int -> 'a -> 'b) -> 'a list -> 'b list
-(** As [mapi] but output list generated in reverse order.  tail recursive *)
-
-val mapi_tr : (int -> 'a -> 'b) -> 'a list -> 'b list
-(** As [mapi] but tail-recursive.  *)
-
 val split_nth : int -> 'a list -> 'a list * 'a list
 (** [List.split_nth pos l] returns the prefix of l up to pos and the remaining elements of l *)
 
@@ -358,3 +352,5 @@ val first : 'a list -> 'a
 val last : 'a list -> 'a
 (** Returns the last element of a list (not the same as [List.tl]) *)
   
+val (--) : int -> int -> int list
+(** m--n returns the list of values from m to n (excluding n) *)
