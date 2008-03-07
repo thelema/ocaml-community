@@ -10,6 +10,9 @@
 (*  the special exception on linking described in file ../../LICENSE.  *)
 (*                                                                     *)
 (*   (C) Flying Frog Consultancy Ltd., 2006                            *)
+(* portions lifted from Extlib                                         *)
+(* Copyright (C) 2003 Brian Hurt                                       *)
+(* Copyright (C) 2003 Nicolas Cannasse                                 *)
 (***********************************************************************)
 
 (* $Id$ *)
@@ -26,6 +29,10 @@ external raise : exn -> 'a = "%raise"
 
 let failwith s = raise(Failure s)
 let invalid_arg s = raise(Invalid_argument s)
+let finally handler f x =
+  let r = ( try f x with e -> handler(); raise e ) in
+  handler(); r
+
 
 exception Exit
 
