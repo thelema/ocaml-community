@@ -9,6 +9,10 @@
 (*  under the terms of the GNU Library General Public License, with    *)
 (*  the special exception on linking described in file ../LICENSE.     *)
 (*                                                                     *)
+(* portions lifted from Extlib                                         *)
+(* Copyright (C) 2003 Brian Hurt                                       *)
+(* Copyright (C) 2003 Nicolas Cannasse                                 *)
+(*   (C) 2008 Edgar Friendly <thelema314@gmail.com>                    *)
 (***********************************************************************)
 
 (* $Id$ *)
@@ -236,6 +240,10 @@ val of_list : ('a -> string) -> 'a list -> string
         val rchop : string -> string
         (** Returns the same string but without the last character.
            does nothing if the string is empty. *)
+
+val chomp : ?char:char -> string -> string
+(** Performs [rchop] if the string ends in '\n' (or other specified char) 
+    else returns original string. *)
 
         val of_int : int -> string
         (** Returns the string representation of an int. *)

@@ -9,6 +9,11 @@
 (*  under the terms of the GNU Library General Public License, with    *)
 (*  the special exception on linking described in file ../LICENSE.     *)
 (*                                                                     *)
+(*   (C) Flying Frog Consultancy Ltd., 2006                            *)
+(* portions lifted from Extlib                                         *)
+(* Copyright (C) 2003 Brian Hurt                                       *)
+(* Copyright (C) 2003 Nicolas Cannasse                                 *)
+(*   (C) 2008 Edgar Friendly <thelema314@gmail.com>                    *)
 (***********************************************************************)
 
 (* $Id$ *)
@@ -315,6 +320,12 @@ let lchop s =
     
 let rchop s =
   if s = "" then "" else sub s 0 (length s - 1)
+
+let chomp ?(char='\n') s = 
+  if s = "" then "" else
+    let l = length s in
+    if get s (l-1) = char then sub s 0 (l-1)
+    else s
     
 let of_int = string_of_int
   
