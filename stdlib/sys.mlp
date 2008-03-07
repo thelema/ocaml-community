@@ -79,6 +79,16 @@ let sigttou = -19
 let sigvtalrm = -20
 let sigprof = -21
 
+module Signal = struct
+  type t = SIGABRT | SIGALRM | SIGFPE | SIGHUP | SIGILL | SIGINT | SIGKILL | SIGPIPE | SIGQUIT | SIGSEGV | SIGTERM | SIGUSR1 | SIGUSR2 | SIGCHLD | SIGCONT | SIGSTOP | SIGTSTP | SIGTTIN | SIGTTOU | SIGVTALRM | SIGPROF | SIGOther of int
+
+  let of_int = function -1 -> SIGABRT | -2 -> SIGALRM | -3 -> SIGFPE | -4 -> SIGHUP | -5 -> SIGILL | -6 -> SIGINT | -7 -> SIGKILL | -8 -> SIGPIPE | -9 -> SIGQUIT | -10 -> SIGSEGV | -11 -> SIGTERM | -12 -> SIGUSR1 | -13 -> SIGUSR2 | -14 -> SIGCHLD | -15 -> SIGCONT | -16 -> SIGSTOP | -17 -> SIGTSTP | -18 -> SIGTTIN | -19 -> SIGTTOU | -20 -> SIGVTALRM | -21 -> SIGPROF | x -> SIGOther x
+    
+  let to_int = function SIGABRT -> -1 | SIGALRM -> -2 | SIGFPE -> -3 | SIGHUP -> -4 | SIGILL -> -5 | SIGINT -> -6 | SIGKILL -> -7 | SIGPIPE -> -8 | SIGQUIT -> -9 | SIGSEGV -> -10 | SIGTERM -> -11 | SIGUSR1 -> -12 | SIGUSR2 -> -13 | SIGCHLD -> -14 | SIGCONT -> -15 | SIGSTOP -> -16 | SIGTSTP -> -17 | SIGTTIN -> -18 | SIGTTOU -> -19 | SIGVTALRM -> -20 | SIGPROF -> -21 | SIGOther x -> x
+    
+  let set_signal sig_var sig_beh = ignore(signal (to_int sig_var) sig_beh)
+end
+
 exception Break
 
 let catch_break on =
