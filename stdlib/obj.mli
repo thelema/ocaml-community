@@ -55,3 +55,15 @@ val out_of_heap_tag : int
 
 val marshal : t -> string
 val unmarshal : string -> int -> t * int
+
+
+val dump : 'a -> string
+(** represent a runtime value as a string. Since types are lost at compile
+        time, the representation might not match your type. For example, None
+        will be printed 0 since they share the same runtime representation. *)
+
+val print : 'a -> unit
+(** [print v = print_endline (dump v)] *)
+
+val unique_int : unit -> int
+(** Returns a unique integer (counts from 0) *)
