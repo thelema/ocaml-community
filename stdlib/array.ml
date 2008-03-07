@@ -371,14 +371,13 @@ let findi p xs =
 
 let find p xs = unsafe_get xs (findi p xs)
 
-(* UNCOMMENT WHEN BITSET MERGED
 (* Use of BitSet suggested by Brian Hurt. *)
 let filter p xs =
   let n = length xs in
   (* Use a bitset to store which elements will be in the final array. *)
   let bs = BitSet.create n in
   for i = 0 to n-1 do
-    if p xs.(i) then BitSet.set bs i
+    if p (get xs i) then BitSet.set bs i
   done;
   (* Allocate the final array and copy elements into it. *)
   let n' = BitSet.count bs in
@@ -387,7 +386,7 @@ let filter p xs =
     (fun _ ->
        (* Find the next set bit in the BitSet. *)
        while not (BitSet.is_set bs !j) do incr j done;
-       let r = xs.(!j) in
+       let r = get xs !j in
        incr j;
        r) in
   xs'
@@ -399,7 +398,7 @@ let partition p xs =
   (* Use a bitset to store which elements will be in which final array. *)
   let bs = BitSet.create n in
   for i = 0 to n-1 do
-    if p xs.(i) then BitSet.set bs i
+    if p (unsafe_get xs i) then BitSet.set bs i
   done;
   (* Allocate the final arrays and copy elements into them. *)
   let n1 = BitSet.count bs in
@@ -409,7 +408,7 @@ let partition p xs =
     (fun _ ->
        (* Find the next set bit in the BitSet. *)
        while not (BitSet.is_set bs !j) do incr j done;
-       let r = xs.(!j) in
+       let r = unsafe_get xs !j in
        incr j;
        r) in
   let j = ref 0 in
@@ -417,11 +416,10 @@ let partition p xs =
     (fun _ ->
        (* Find the next clear bit in the BitSet. *)
        while BitSet.is_set bs !j do incr j done;
-       let r = xs.(!j) in
+       let r = unsafe_get xs !j in
        incr j;
        r) in
   xs1, xs2
-*)
 
 let iter2 f a1 a2 =
      if length a1 <> length a2
