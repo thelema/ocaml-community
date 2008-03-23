@@ -105,3 +105,8 @@ val quote : string -> string
     with programs that follow the standard Windows quoting
     conventions.
  *)
+
+val abspath : ?startdir:string -> string -> string
+(** [abspath start filename] takes a starting directory (defaults to
+[Sys.getcwd()]) and a filename (including path) and returns a
+simplified absolute filename to that same filename. *)
