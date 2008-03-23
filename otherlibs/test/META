@@ -1,0 +1,6 @@
+name = "test-simple"
+version="0.01"
+description = "A simple unit testing framework"
+requires = "extLib"
+archive(byte)="testSimple.cma"
+archive(native)="testSimple.cmxa"
