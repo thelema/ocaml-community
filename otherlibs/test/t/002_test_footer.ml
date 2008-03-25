@@ -1,4 +1,4 @@
-#!/usr/local/bin/ocamlrun /usr/local/bin/ocaml
+#!/home/thelema/bin/ocamlrun /home/thelema/bin/ocaml
 
 #load "testSimple.cma";;
 

@@ -83,7 +83,7 @@ let init_document ?plans nodes =
 	in
     { 
       plan_count = plans;
-      nodes = ExtList.List.append nodes footer_nodes;
+      nodes = nodes @ footer_nodes;
     }
 
 (* conversions *)

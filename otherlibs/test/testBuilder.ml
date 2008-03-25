@@ -71,8 +71,8 @@ let build_extended_diagnostic_message test (got : 'a) (expected : 'a) descriptio
         build_diagnostics [
          "Failed test '" ^ description ^ "\'";
          "in " ^ (Array.get Sys.argv 0);
-         "     got: " ^ (ExtLib.dump got);
-		 "expected: " ^ (ExtLib.dump expected);
+         "     got: " ^ (Obj.dump got);
+		 "expected: " ^ (Obj.dump expected);
         ]
 
 let build_diagnostic_message test description =
