@@ -233,7 +233,7 @@ let starts_with str p =
   if length str < len then 
     false
   else
-    sub str 0 len = p
+    sub str 0 len = p (* TODO: make efficient? - remove allocation/copy *)
       
 let ends_with s e =
   let el = length e in
@@ -241,7 +241,7 @@ let ends_with s e =
   if sl < el then
     false
   else
-    sub s (sl-el) el = e
+    sub s (sl-el) el = e (* TODO: make efficient? - remove allocation/copy *)
       
 let find str sub =
   let sublen = length sub in
@@ -288,7 +288,7 @@ let split str sep =
   let slen = length str in
   sub str 0 p, sub str (p + len) (slen - p - len)
     
-let nsplit str sep =
+let nsplit str sep = (* TODO: optimize allocations - too many re-allocations *)
   if str = "" then []
   else (
     let rec nsplit str sep =
