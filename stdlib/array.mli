@@ -257,7 +257,6 @@ val fold_right2 : ('a -> 'b -> 'c -> 'c) -> 'a array -> 'b array -> 'c -> 'c
         array [a].
     *)
 
-(* WAITING FOR PREREQUISITE ON IMPLEMENTATION
   val filter : ('a -> bool) -> 'a array -> 'a array
     (** [filter p a] returns all the elements of the array [a]
         that satisfy the predicate [p].  The order of the elements
@@ -272,7 +271,10 @@ val fold_right2 : ('a -> 'b -> 'c -> 'c) -> 'a array -> 'b array -> 'c -> 'c
         satisfy the predicate [p], and [a2] is the array of all the
         elements of [a] that do not satisfy [p].
         The order of the elements in the input array is preserved. *)
-*)
+
+  val to_enum : 'a array -> 'a Enum.t
+
+  val of_enum : 'a Enum.t -> 'a array
 
 (**/**)
 (** {6 Undocumented functions} *)

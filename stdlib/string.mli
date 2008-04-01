@@ -272,6 +272,10 @@ val chomp : ?char:char -> string -> string
                 within [str] has been replaced by the string [by]. The boolean
                 is true if a subtitution has taken place. *)
 
+	val to_enum : string -> char Enum.t
+
+	val of_enum : char Enum.t -> string
+
 
 (**/**)
 

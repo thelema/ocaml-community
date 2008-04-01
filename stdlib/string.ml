@@ -369,3 +369,27 @@ let replace ~str ~sub ~by =
        (slice ~first:(i+(length sub)) str))
   with
       Failure "String.find" -> (false, copy str)
+
+let to_enum s =
+        let l = length s in
+        let rec make i =
+                Enum.make
+                ~next:(fun () ->
+                        if !i = l then
+                                raise Enum.No_more_elements
+                        else
+                                let p = !i in
+                                incr i;
+                                unsafe_get s p
+                        )
+                ~count:(fun () -> l - !i)
+                ~clone:(fun () -> make (ref !i))
+        in
+        make (ref 0)
+
+let of_enum e =
+        let l = Enum.count e in
+        let s = create l in
+        let i = ref 0 in
+        Enum.iter (fun c -> unsafe_set s !i c; incr i) e;
+        s
