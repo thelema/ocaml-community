@@ -10,6 +10,10 @@
 (*  the special exception on linking described in file ../LICENSE.     *)
 (*                                                                     *)
 (*   (C) Flying Frog Consultancy Ltd., 2006                            *)
+(* portions lifted from Extlib                                         *)
+(* Copyright (C) 2003 Brian Hurt                                       *)
+(* Copyright (C) 2003 Nicolas Cannasse                                 *)
+(* Copyright 2008 <bluestorm dot dylc on-the-server gmail dot com>     *)
 (***********************************************************************)
 
 (* $Id$ *)
@@ -32,13 +36,40 @@ let tl = function
 
 let nth l n =
   if n < 0 then invalid_arg "List.nth" else
-  let rec nth_aux l n =
-    match l with
+  let rec nth_aux n = function
     | [] -> failwith "nth"
-    | a::l -> if n = 0 then a else nth_aux l (n-1)
-  in nth_aux l n
+    | a::t -> if n = 0 then a else nth_aux (n-1) t
+  in nth_aux n l
 
-let append = (@)
+
+(* FROM EXTLIB *)
+
+(* Thanks to Jacques Garrigue for suggesting the following structure *)
+type 'a mut_list =  {
+        hd: 'a; 
+        mutable tl: 'a list
+}
+external inj : 'a mut_list -> 'a list = "%identity"
+
+external magic : unit -> 'b = "%identity"
+
+let dummy_node () = { hd = magic (); tl = [] }
+
+let append l1 l2 =  (* EXTLIB *) 
+  match l1 with
+    | [] -> l2
+    | h :: t ->
+        let rec loop dst = function
+          | [] ->
+              dst.tl <- l2
+          | h :: t ->
+              let cell = { hd = h; tl = [] } in
+              dst.tl <- inj cell;
+              loop cell t
+        in
+        let r = { hd = h; tl = [] } in
+        loop r t;
+        inj r
 
 let rec rev_append l1 l2 =
   match l1 with
@@ -47,15 +78,51 @@ let rec rev_append l1 l2 =
 
 let rev l = rev_append l []
 
-let rec flatten = function
-    [] -> []
-  | l::r -> l @ flatten r
+let rec flatten l = 
+  let rec inner dst = function
+    | [] -> dst
+    | h :: t ->
+        let r = { hd = h; tl = [] } in
+        dst.tl <- inj r;
+        inner r t
+  in
+  let rec outer dst = function
+    | [] -> ()
+    | h :: t -> outer (inner dst h) t
+  in
+  let r = dummy_node () in
+  outer r l;
+  r.tl
 
 let concat = flatten
 
-let rec map f = function
-    [] -> []
-  | a::l -> let r = f a in r :: map f l
+let map f = function
+  | [] -> []
+  | h :: t ->
+      let rec loop dst = function
+        | [] -> ()
+        | h :: t ->
+            let r = { hd = f h; tl = [] } in
+            dst.tl <- inj r;
+            loop r t
+      in
+      let r = { hd = f h; tl = [] } in
+      loop r t;
+      inj r
+
+let mapi f = function
+  | [] -> []
+  | h :: t ->
+      let rec loop n dst = function
+        | [] -> ()
+        | h :: t ->
+            let r = { hd = f n h; tl = [] } in
+            dst.tl <- inj r;
+            loop (n+1) r t
+      in
+      let r = { hd = f 0 h; tl = [] } in
+      loop 1 r t;
+      inj r
 
 let rev_map f l =
   let rec rmap_f accu = function
@@ -74,16 +141,57 @@ let rec fold_left f accu l =
     [] -> accu
   | a::l -> fold_left f (f accu a) l
 
-let rec fold_right f l accu =
-  match l with
-    [] -> accu
-  | a::l -> f a (fold_right f l accu)
+let fold_right_max = 1000
+let fold_right_chunk_size = 500
 
-let rec map2 f l1 l2 =
-  match (l1, l2) with
-    ([], []) -> []
-  | (a1::l1, a2::l2) -> let r = f a1 a2 in r :: map2 f l1 l2
-  | (_, _) -> invalid_arg "List.map2"
+let fold_right f li init =
+  let rec fold_chunk li =
+    let (n, init) = jump 0 li in
+    partial_fold init li n
+  and jump n = function
+    | [] -> (n, init)
+    | _::tl when n < fold_right_chunk_size -> jump (n + 1) tl
+    | li -> (n, fold_chunk li)
+  and partial_fold partial_init li = function
+    | 0 -> partial_init
+    | n -> match li with
+        | [] -> assert false
+        | hd::tl -> f hd (partial_fold partial_init tl (n -1))  in
+  let rec loop n = function
+    | [] -> init
+    | h :: t when n < fold_right_max -> f h (loop (n+1) t)
+    | li -> fold_chunk li
+  in loop 0 li
+       
+let fold_right f l init =
+        let rec tail_loop acc = function
+                | [] -> acc
+                | h :: t -> tail_loop (f h acc) t
+        in
+        let rec loop n = function
+                | [] -> init
+                | h :: t ->
+                        if n < fold_right_max then
+                                f h (loop (n+1) t)
+                        else
+                                f h (tail_loop init (rev t))
+        in
+        loop 0 l
+
+let map2 f l1 l2 =
+        let rec loop dst src1 src2 =
+                match src1, src2 with
+                        | [], [] -> ()
+                        | h1 :: t1, h2 :: t2 ->
+                                let r = { hd = f h1 h2; tl = [] } in
+                                dst.tl <- inj r;
+                                loop r t1 t2
+                        | _ -> invalid_arg "List.map2"
+        in
+        let dummy = dummy_node () in
+        loop dummy l1 l2;
+        dummy.tl
+
 
 let rev_map2 f l1 l2 =
   let rec rmap2_f accu l1 l2 =
@@ -107,11 +215,24 @@ let rec fold_left2 f accu l1 l2 =
   | (a1::l1, a2::l2) -> fold_left2 f (f accu a1 a2) l1 l2
   | (_, _) -> invalid_arg "List.fold_left2"
 
-let rec fold_right2 f l1 l2 accu =
-  match (l1, l2) with
-    ([], []) -> accu
-  | (a1::l1, a2::l2) -> f a1 a2 (fold_right2 f l1 l2 accu)
-  | (_, _) -> invalid_arg "List.fold_right2"
+let fold_right2 f l1 l2 init =
+        let rec tail_loop acc l1 l2 =
+                match l1, l2 with
+                | [] , [] -> acc
+                | h1 :: t1 , h2 :: t2 -> tail_loop (f h1 h2 acc) t1 t2
+                | _ -> invalid_arg "List.fold_right2"
+        in
+        let rec loop n l1 l2 =
+                match l1, l2 with
+                | [], [] -> init
+                | h1 :: t1, h2 :: t2 ->
+                        if n < fold_right_max then
+                                f h1 h2 (loop (n+1) t1 t2)
+                        else
+                                f h1 h2 (tail_loop init (rev t1) (rev t2))
+                | _ -> invalid_arg "List.fold_right2"
+        in
+        loop 0 l1 l2
 
 let rec for_all p = function
     [] -> true
@@ -157,43 +278,108 @@ let rec mem_assq x = function
   | [] -> false
   | (a, b) :: l -> a == x || mem_assq x l
 
-let rec remove_assoc x = function
-  | [] -> []
-  | (a, b as pair) :: l ->
-      if compare a x = 0 then l else pair :: remove_assoc x l
+let remove_assoc x lst = 
+        let rec loop dst = function
+                | [] -> ()
+                | (a, _ as pair) :: t ->
+                        if a = x then
+                                dst.tl <- t
+                        else
+                                let r = { hd = pair; tl = [] } in
+                                dst.tl <- inj r;
+                                loop r t
+        in
+        let dummy = dummy_node () in
+        loop dummy lst;
+        dummy.tl
 
-let rec remove_assq x = function
-  | [] -> []
-  | (a, b as pair) :: l -> if a == x then l else pair :: remove_assq x l
+let remove_assq x lst = 
+        let rec loop dst = function
+                | [] -> ()
+                | (a, _ as pair) :: t ->
+                        if a == x then
+                                dst.tl <- t
+                        else
+                                let r = { hd =  pair; tl = [] } in
+                                dst.tl <- inj r;
+                                loop r t
+        in
+        let dummy = dummy_node() in
+        loop dummy lst;
+        dummy.tl
 
 let rec find p = function
   | [] -> raise Not_found
   | x :: l -> if p x then x else find p l
 
-let find_all p =
-  let rec find accu = function
-  | [] -> rev accu
-  | x :: l -> if p x then find (x :: accu) l else find accu l in
-  find []
+let find_all p l = 
+        let rec findnext dst = function
+                | [] -> ()
+                | h :: t -> 
+                        if p h then
+                                let r = { hd = h; tl = [] } in
+                                dst.tl <- inj r;
+                                findnext r t
+                        else
+                                findnext dst t
+        in
+        let dummy = dummy_node () in
+        findnext dummy l;
+        dummy.tl
 
 let filter = find_all
 
-let partition p l =
-  let rec part yes no = function
-  | [] -> (rev yes, rev no)
-  | x :: l -> if p x then part (x :: yes) no l else part yes (x :: no) l in
-  part [] [] l
+let partition p lst = 
+  let rec loop yesdst nodst = function
+    | [] -> ()
+    | h :: t ->
+        let r = { hd = h; tl = [] } in
+        if p h then
+          begin
+            yesdst.tl <- inj r;
+            loop r nodst t
+          end
+        else
+          begin
+            nodst.tl <- inj r;
+            loop yesdst r t
+          end
+  in
+  let yesdummy = dummy_node()
+  and nodummy = dummy_node()
+  in
+  loop yesdummy nodummy lst;
+  yesdummy.tl, nodummy.tl
 
-let rec split = function
-    [] -> ([], [])
-  | (x,y)::l ->
-      let (rx, ry) = split l in (x::rx, y::ry)
+let split lst =
+        let rec loop adst bdst = function
+                | [] -> ()
+                | (a, b) :: t -> 
+                        let x = { hd = a; tl = [] } 
+                        and y = { hd = b; tl = [] } in
+                        adst.tl <- inj x;
+                        bdst.tl <- inj y;
+                        loop x y t
+        in
+        let adummy = dummy_node ()
+        and bdummy = dummy_node ()
+        in
+        loop adummy bdummy lst;
+        adummy.tl, bdummy.tl
 
-let rec combine l1 l2 =
-  match (l1, l2) with
-    ([], []) -> []
-  | (a1::l1, a2::l2) -> (a1, a2) :: combine l1 l2
-  | (_, _) -> invalid_arg "List.combine"
+let combine l1 l2 =
+        let rec loop dst l1 l2 =
+                match l1, l2 with
+                | [], [] -> ()
+                | h1 :: t1, h2 :: t2 -> 
+                        let r = { hd = h1, h2; tl = [] } in
+                        dst.tl <- inj r;
+                        loop r t1 t2
+                | _, _ -> invalid_arg "List.combine"
+        in
+        let dummy = dummy_node () in
+        loop dummy l1 l2;
+        dummy.tl
 
 (** sorting *)
 
@@ -371,32 +557,141 @@ let positions pred l =
   let aux (i, is) e = i + 1, if pred e then i :: is else is in
   rev (snd (fold_left aux (0, []) l))
 
-let mapi f l =
-  let rec aux n = function
-      h :: t -> let h = f n h in h :: aux (n + 1) t
-    | [] -> [] in
-  aux 0 l
+let split_nth index = function
+  | [] -> if index = 0 then [],[] else invalid_arg "List.split_nth"
+  | (h :: t as l) ->
+      if index = 0 then [],l
+      else if index < 0 then invalid_arg "List.split_nth"
+      else
+        let rec loop n dst l =
+          if n = 0 then l else
+            match l with
+              | [] -> invalid_arg "List.split_nth"
+              | h :: t ->
+                  let r = { hd =  h; tl = [] } in
+                  dst.tl <- inj r;
+                  loop (n-1) r t 
+        in
+        let r = { hd = h; tl = [] } in
+        inj r, loop (index-1) r t
+	  
+let chop2 = split_nth 
+
+(***** EXTLIB ********)
+
+let take n l =
+        let rec loop n dst = function
+                | h :: t when n > 0 ->
+                        let r = { hd = h; tl = [] } in
+                        dst.tl <- inj r;
+                        loop (n-1) r t
+                | _ ->
+                        ()
+        in
+        let dummy = dummy_node() in
+        loop n dummy l;
+        dummy.tl
+
+let drop = chop
+
+(* takewhile and dropwhile by Richard W.M. Jones. *)
+let rec takewhile f = function
+  | [] -> []
+  | x :: xs when f x -> x :: takewhile f xs
+  | _ -> []
+
+let rec dropwhile f = function
+  | [] -> []
+  | x :: xs when f x -> dropwhile f xs
+  | xs -> xs
+
+let reduce f l = fold_left f (hd l) (tl l)
+
+let make i x =
+  if i < 0 then invalid_arg "List.make";
+  let rec make' x = function
+    | 0 -> []
+    | i -> x :: make' x (i-1)
+  in
+  make' x i
+
+(* FIXME: USE A HASHTABLE? *)
+let rec unique ?(cmp = ( = )) l =
+  let rec loop dst = function
+    | [] -> ()
+    | h :: t ->
+        match exists (cmp h) t with
+          | true -> loop dst t
+          | false ->
+              let r = { hd =  h; tl = [] }  in
+              dst.tl <- inj r;
+              loop r t
+  in
+  let dummy = dummy_node() in
+  loop dummy l;
+  dummy.tl
     
-let rev_mapi f l =
-  let rec aux n accu = function
-      h :: t -> aux (n + 1) (f n h :: accu) t
-    | [] -> accu in
-  aux 0 [] l
-    
-let mapi_tr f l = rev (rev_mapi f l)
-  
-let rec chop i l = match i, l with
-  | 0, l -> [], l
-  | i, h :: t -> (fun (fr, ba) -> h :: fr, ba) (chop (i - 1) t)
-  | _ -> invalid_arg "chop"
+
+let filter_map f l =
+  let rec loop dst = function
+    | [] -> ()
+    | h :: t ->
+        match f h with
+          | None -> loop dst t
+          | Some x ->
+              let r = { hd = x; tl = [] }  in
+              dst.tl <- inj r;
+              loop r t
+  in
+  let dummy = dummy_node() in
+  loop dummy l;
+  dummy.tl
+
+let rfind p l = find p (rev l)
+
+let rec findi p l =
+  let rec loop n = function
+    | [] -> raise Not_found
+    | h :: t ->
+        if p n h then (n,h) else loop (n+1) t
+  in
+  loop 0 l
+
+let find_exc f e l =
+  try
+    find f l
+  with
+      Not_found -> raise e
+
+let rec init size f =
+  if size = 0 then [] 
+  else if size < 0 then invalid_arg "List.init"
+  else
+    let rec loop dst n =
+      if n < size then
+        let r = { hd = f n; tl = [] } in
+        dst.tl <- inj r;
+        loop r (n+1)
+    in
+    let r = { hd = f 0; tl = [] } in
+    loop r 1;
+    inj r
       
-let rev_chop i l =
-  let rec aux i fr ba = match i, fr, ba with
-      0, fr, ba -> (fr, ba)
-    | i, fr, h :: t -> aux (i - 1) (h :: fr) t
-    | _ -> invalid_arg "rev_chop" in
-  aux i [] l
+let iteri f l = 
+  let rec loop n = function
+    | [] -> ()
+    | h :: t ->
+        f n h;
+        loop (n+1) t
+  in
+  loop 0 l
     
-let chop_tr i l =
-  (fun (fr, ba) -> rev fr, ba) (rev_chop i l)
-    
+let first = hd
+
+let rec last = function
+  | [] -> invalid_arg "List.last"
+  | h :: [] -> h
+  | _ :: t -> last t
+
+(* in pervasives?  3 List.-- 5 doesn't have the ring that 3--5 has.  Also, right endpoint version?  --]?  *)
+let rec (--) = fun m n -> if m >= n then [] else m::((m + 1) -- n)

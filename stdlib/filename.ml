@@ -9,6 +9,7 @@
 (*  under the terms of the GNU Library General Public License, with    *)
 (*  the special exception on linking described in file ../LICENSE.     *)
 (*                                                                     *)
+(* portions (C) 2004 John Goerzen                                      *)
 (***********************************************************************)
 
 (* $Id$ *)
@@ -215,3 +216,29 @@ let open_temp_file ?(mode = [Open_text]) prefix suffix =
     with Sys_error _ as e ->
       if counter >= 1000 then raise e else try_name (counter + 1)
   in try_name 0
+
+(* from missinglib (John Goerzen) - modified by Eric Norige *)
+let abspath ?(startdir=Sys.getcwd ()) filename =
+(*  if not (Filename.is_relative filename) then
+    filename
+  else *)
+  let rec simplify acc = function
+      [] -> List.rev acc
+    | "" :: xs -> simplify acc xs (* OK to drop empty path entries? *)
+    | cdn :: xs when cdn = current_dir_name -> 
+	simplify acc xs (* drop '.' entries *)
+    | pdn :: xs when pdn = parent_dir_name -> 
+	( try simplify (List.tl acc) xs (* drop the most recent dir *)
+	  with Failure "tl" -> failwith "Filename.abspath: .. past root" )
+    | x :: xs -> simplify xs (x :: acc)
+  in
+  if String.length filename < 1 then
+    startdir
+  else
+    let fn = 
+      if String.starts_with filename dir_sep
+      then filename 
+      else concat startdir filename
+    in
+    let components = String.nsplit dir_sep fn in
+    List.fold_left concat "/" (simplify [] components)

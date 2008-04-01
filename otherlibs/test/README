@@ -1,0 +1,52 @@
+TestSimple - A simple unit testing framework for OCaml
+
+This is a very simple, but easy to use unit testing framework based on 
+Perl's very successful Test::* modules. It produces output using the 
+TAP protocol, which is easily read by the Perl module Test::Harness. This 
+means that OCaml tests can take advantage of many of the nice TAP based 
+tools that Perl has to offer.
+
+Installation
+=============================================
+
+Requirements:
+- OCaml
+- GNU make
+- the findlib library manager (ocamlfind command)
+- the ExtLib library
+
+If you want to take advantage of Perl's testing 
+utilities for processing TAP output, it is suggested 
+that you have a reasonably modern Perl version 
+(5.6.0 or above should do). 
+
+From the source directory, do:
+
+  make
+  make install
+
+If you want to run the test suite, do:
+
+  make test 
+
+NOTE: This requires the prove utility to be available 
+on your system, this comes with the perl module 
+Test::Harness and should already be available on most 
+*nix-like systems.
+
+If you want to remove the package do:
+
+  make uninstall
+
+COPYRIGHT AND LICENCE
+=============================================
+
+Copyright (C) 2007 Infinity Interactive, Inc.
+
+http://www.iinteractive.com
+
+This library is free software; you can redistribute it and/or modify
+it under the terms specified in the LICENSE file included in this 
+distribution.
+
+

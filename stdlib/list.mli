@@ -286,20 +286,71 @@ val positions : ('a -> bool) -> 'a list -> int list
 (** [positions pred l] returns a list of positions at which elements [e] of [l] make [pred e] true.  ex: [positions (fun x -> x > 2) [1; 3; 5; 2; 4]] returns [[1; 2; 4]] *)
 
 val mapi : (int -> 'a -> 'b) -> 'a list -> 'b list
-(** [mapi f l] works as [map], but the mapping function gets an extra argument with the index (0..List.length l-1) of the element getting mapped. *)
+(** [mapi f l] will build the list containing
+    [(f 0 a0);(f 1 a1) ... (f n an)] where [a0..an] are the elements of
+    the list [l]. *)
 
-val rev_mapi : (int -> 'a -> 'b) -> 'a list -> 'b list
-(** As [mapi] but output list generated in reverse order.  tail recursive *)
+val split_nth : int -> 'a list -> 'a list * 'a list
+(** [List.split_nth pos l] returns the prefix of l up to pos and the remaining elements of l *)
 
-val mapi_tr : (int -> 'a -> 'b) -> 'a list -> 'b list
-(** As [mapi] but tail-recursive.  *)
+val take : int -> 'a list -> 'a list
+  (** [take n l] returns up to the [n] first elements from list [l], if
+      available. *)
+  
+val drop : int -> 'a list -> 'a list
+  (** [drop n l] returns [l] without the first [n] elements, or the empty
+      list if [l] have less than [n] elements. *)
+  
+val takewhile : ('a -> bool) -> 'a list -> 'a list
+  (** [takewhile f xs] returns the first elements of list [xs]
+      which satisfy the predicate [f]. *)
+  
+val dropwhile : ('a -> bool) -> 'a list -> 'a list
+  (** [dropwhile f xs] returns the list [xs] with the first
+      elements satisfying the predicate [f] dropped. *)
 
-val chop : int -> 'a list -> 'a list * 'a list
-(** [chop pos l] returns the prefix of l up to pos and the remaining elements of l *)
+val reduce : ('a -> 'a -> 'a) -> 'a list -> 'a
+(** [reduce f l] applies [f] as fold_left, but with first element as initial value.  Raises Failure "tl" if [l] is empty. *)
 
-val rev_chop : int -> 'a list -> 'a list * 'a list
-(** As [chop] but first list is generated and returned in reverse *)
+val make : int -> 'a -> 'a list
+(** Similar to [String.make], [make n x] returns a
+    * list containing [n] elements [x].
+*)
 
-val chop_tr :  int -> 'a list -> 'a list * 'a list
-(** As [chop] but tail-recursive. *)
+val unique : ?cmp:('a -> 'a -> bool) -> 'a list -> 'a list
+(** [unique cmp l] returns the list [l] without any duplicate element.
+    Default comparator ( = ) is used if no comparison function specified. *)
 
+val filter_map : ('a -> 'b option) -> 'a list -> 'b list
+(** [List.filter_map f l] works as map and filter together - return [None] in [f] to remove that element from the list, return [Some b] to put [b] in the output list *)
+
+val rfind : ('a -> bool) -> 'a list -> 'a
+(** [rfind p l] returns the last element [x] of [l] such as [p x] returns
+    [true] or raises [Not_found] if such element as not been found. *)
+
+val findi : (int -> 'a -> bool) -> 'a list -> (int * 'a)
+(** [findi p e l] returns the first element [ai] of [l] along with its
+    index [i] such that [p i ai] is true, or raises [Not_found] if no
+    such element has been found. *)
+
+val find_exc : ('a -> bool) -> exn -> 'a list -> 'a
+(** [find_exc p e l] returns the first element of [l] such as [p x]
+    returns [true] or raises [e] if such element as not been found. *)
+
+val init : int -> (int -> 'a) -> 'a list
+(** Similar to [Array.init], [init n f] returns the list containing
+    the results of (f 0),(f 1).... (f (n-1)).
+    Raise [Invalid_arg "ExtList.init"] if n < 0.*)
+  
+val iteri : (int -> 'a -> 'b) -> 'a list -> unit
+(** [iteri f l] will call [(f 0 a0);(f 1 a1) ... (f n an)] where
+    [a0..an] are the elements of the list [l]. *)
+  
+val first : 'a list -> 'a
+(** Returns the first element of a list (as [List.hd]) *)
+
+val last : 'a list -> 'a
+(** Returns the last element of a list (not the same as [List.tl]) *)
+  
+val (--) : int -> int -> int list
+(** m--n returns the list of values from m to n (excluding n) *)

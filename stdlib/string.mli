@@ -9,6 +9,10 @@
 (*  under the terms of the GNU Library General Public License, with    *)
 (*  the special exception on linking described in file ../LICENSE.     *)
 (*                                                                     *)
+(* portions lifted from Extlib                                         *)
+(* Copyright (C) 2003 Brian Hurt                                       *)
+(* Copyright (C) 2003 Nicolas Cannasse                                 *)
+(*   (C) 2008 Edgar Friendly <thelema314@gmail.com>                    *)
 (***********************************************************************)
 
 (* $Id$ *)
@@ -178,6 +182,103 @@ val implode: char list -> string
 
 val splice: string -> int -> int -> string -> string
 (** [String.splice s off len rep] cuts out the section of [s] indicated by [off] and [len] and replaces it by [rep] *)
+
+val of_list : ('a -> string) -> 'a list -> string
+(** [String.of_list f l] converts the list [l] into a string through helper function [f] to turn each element into a string. *)
+
+        val ends_with : string -> string -> bool
+        (** [ends_with s x] returns true if the string [s] is ending with [x]. *)
+
+        val starts_with : string -> string -> bool
+        (** [starts_with s x] return true if [s] is starting with [x]. *)
+
+        val find : string -> string -> int
+        (** [find s x] returns the starting index of the string [x]
+            within the string [s] or raises [Invalid_string] if [x]
+            is not a substring of [s]. *)
+
+        val strip : ?chars:string -> string -> string
+        (** Returns the string without the chars if they are at the beginning or
+                at the end of the string. By default chars are " \t\r\n". *)
+
+        val exists : string -> string -> bool
+        (** [exists str sub] returns true if [sub] is a substring of [str] or
+                false otherwise. *)
+
+        val split : string -> string -> string * string
+        (** [split s sep] splits the string [s] between the first
+                occurrence of [sep].
+            raises [Invalid_string] if the separator is not found. *)
+
+        val nsplit : string -> string -> string list
+        (** [nsplit s sep] splits the string [s] into a list of strings
+                which are separated by [sep].
+                [nsplit "" _] returns the empty list. *)
+
+        val join : string -> string list -> string
+        (** Same as [concat] *)
+
+        val slice : ?first:int -> ?last:int -> string -> string
+        (** [slice ?first ?last s] returns a "slice" of the string
+          which corresponds to the characters [s.[first]],
+          [s.[first+1]], ..., [s[last-1]]. Note that the character at
+          index [last] is {b not} included! If [first] is omitted it
+          defaults to the start of the string, i.e. index 0, and if
+          [last] is omitted is defaults to point just past the end of
+          [s], i.e. [length s].  Thus, [slice s] is equivalent to
+          [copy s].
+
+          Negative indexes are interpreted as counting from the end of
+          the string. For example, [slice ~last:-2 s] will return the
+          string [s], but without the last two characters.
+
+          This function {b never} raises any exceptions. If the
+          indexes are out of bounds they are automatically clipped.
+        *)
+
+        val lchop : string -> string
+        (** Returns the same string but without the first character.
+            does nothing if the string is empty. *)
+
+        val rchop : string -> string
+        (** Returns the same string but without the last character.
+           does nothing if the string is empty. *)
+
+val chomp : ?char:char -> string -> string
+(** Performs [rchop] if the string ends in '\n' (or other specified char) 
+    else returns original string. *)
+
+        val of_int : int -> string
+        (** Returns the string representation of an int. *)
+
+        val of_float : float -> string
+        (** Returns the string representation of an float. *)
+
+        val of_char : char -> string
+        (** Returns a string containing one given character. *)
+
+        val to_int : string -> int
+        (** Returns the integer represented by the given string or
+            raises [Invalid_string] if the string does not represent an integer.*)
+
+        val to_float : string -> float
+        (** Returns the float represented by the given string or
+            raises Invalid_string if the string does not represent a float. *)
+
+        val replace_chars : (char -> string) -> string -> string
+        (** [replace_chars f s] returns a string where all chars [c] of [s] have been
+                replaced by the string returned by [f c]. *)
+
+        val replace : str:string -> sub:string -> by:string -> bool * string
+        (** [replace ~str ~sub ~by] returns a tuple constisting of a boolean
+                and a string where the first occurrence of the string [sub]
+                within [str] has been replaced by the string [by]. The boolean
+                is true if a subtitution has taken place. *)
+
+	val to_enum : string -> char Enum.t
+
+	val of_enum : char Enum.t -> string
+
 
 (**/**)
 

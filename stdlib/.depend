@@ -14,6 +14,8 @@ array.cmo: array.cmi
 array.cmx: array.cmi 
 arrayLabels.cmo: array.cmi arrayLabels.cmi 
 arrayLabels.cmx: array.cmx arrayLabels.cmi 
+bitSet.cmo: bitSet.cmi
+bitSet.cmx: bitSet.cmi
 buffer.cmo: sys.cmi string.cmi buffer.cmi 
 buffer.cmx: sys.cmx string.cmx buffer.cmi 
 callback.cmo: obj.cmi callback.cmi 
@@ -30,6 +32,8 @@ complex.cmo: complex.cmi
 complex.cmx: complex.cmi 
 digest.cmo: string.cmi printf.cmi digest.cmi 
 digest.cmx: string.cmx printf.cmx digest.cmi 
+enum.cmo: enum.cmi
+enum.cmx: enum.cmi
 filename.cmo: sys.cmi string.cmi random.cmi printf.cmi buffer.cmi \
     filename.cmi 
 filename.cmx: sys.cmx string.cmx random.cmx printf.cmx buffer.cmx \
@@ -110,5 +114,7 @@ uTF8.cmo: uChar.cmi uTF8.cmi
 uTF8.cmx: uChar.cmx uTF8.cmi
 vect.cmo: array.cmi vect.cmi
 vect.cmx: array.cmx vect.cmi
+typestruct.cmo: typestruct.cmi
+typestruct.cmx: typestruct.cmi
 weak.cmo: sys.cmi obj.cmi hashtbl.cmi array.cmi weak.cmi 
 weak.cmx: sys.cmx obj.cmx hashtbl.cmx array.cmx weak.cmi 

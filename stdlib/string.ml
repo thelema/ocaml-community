@@ -9,6 +9,11 @@
 (*  under the terms of the GNU Library General Public License, with    *)
 (*  the special exception on linking described in file ../LICENSE.     *)
 (*                                                                     *)
+(*   (C) Flying Frog Consultancy Ltd., 2006                            *)
+(* portions lifted from Extlib                                         *)
+(* Copyright (C) 2003 Brian Hurt                                       *)
+(* Copyright (C) 2003 Nicolas Cannasse                                 *)
+(*   (C) 2008 Edgar Friendly <thelema314@gmail.com>                    *)
 (***********************************************************************)
 
 (* $Id$ *)
@@ -77,6 +82,10 @@ let concat sep l =
           pos := !pos + length s)
         tl;
       r
+
+let of_list string_of l =
+  "["^concat "; " (List.map string_of l)^"]"
+
 
 external is_printable: char -> bool = "caml_is_printable"
 external char_code: char -> int = "%identity"
@@ -176,38 +185,39 @@ type t = string
 
 let compare (x: t) (y: t) = Pervasives.compare x y
 
+(*FROM STDLIB2*)
 (* String.create is a source of non-determinism in the OCaml stdlib. *)
 (*let create n = make n '\000' (* INCLUDE THIS? *) *)
 
 let init n f =
   let s = make n (f 0) in
   for i=1 to n-1 do
-    set s i (f i);
+    unsafe_set s i (f i);
   done;
   s
 
-let map f s = init (length s) (fun i -> f (get s i))
+let map f s = init (length s) (fun i -> f (unsafe_get s i))
   
 let rev_map f s =
   let n = length s in
-  init n (fun i -> f (get s (n - i - 1)))
+  init n (fun i -> f (unsafe_get s (n - i - 1)))
 
 let rev_iter f s =
   for i = length s - 1 downto 0 do
-    f (get s i)
+    f (unsafe_get s i)
   done
 
 let fold_left f accu s =
   let accu = ref accu in
   for i = 0 to length s - 1 do
-    accu := f !accu (get s i)
+    accu := f !accu (unsafe_get s i)
   done;
   !accu
 
 let fold_right f s accu =
   let accu = ref accu in
   for i = length s - 1 downto 0 do
-    accu := f (get s i) !accu
+    accu := f (unsafe_get s i) !accu
   done;
   !accu
 
@@ -225,3 +235,171 @@ let splice s1 off len s2 =
   blit s2 0 s off len2; (* s2 at splice point *)
   blit s1 (off+len) s (off+len2) (len1 - (off+len)); (* s1 after off+len *)
   s
+
+(* FROM EXTLIB *)
+let starts_with str p =
+  let len = length p in
+  if length str < len then 
+    false
+  else
+    sub str 0 len = p (* TODO: make efficient? - remove allocation/copy *)
+      
+let ends_with s e =
+  let el = length e in
+  let sl = length s in
+  if sl < el then
+    false
+  else
+    sub s (sl-el) el = e (* TODO: make efficient? - remove allocation/copy *)
+      
+let find str sub =
+  let sublen = length sub in
+  if sublen = 0 then
+    0
+  else
+    let found = ref 0 in
+    let len = length str in
+    try
+      for i = 0 to len - sublen do
+        let j = ref 0 in
+        while unsafe_get str (i + !j) = unsafe_get sub !j do
+          incr j;
+          if !j = sublen then begin found := i; raise Exit; end;
+        done;
+      done;
+      failwith "String.find"
+    with
+        Exit -> !found
+
+let exists str sub =
+  try
+    ignore(find str sub);
+    true
+  with
+      Failure "String.find" -> false
+	
+let strip ?(chars=" \t\r\n") s =
+  let p = ref 0 in
+  let l = length s in
+  while !p < l && contains chars (unsafe_get s !p) do
+    incr p;
+  done;
+  let p = !p in
+  let l = ref (l - 1) in
+  while !l >= p && contains chars (unsafe_get s !l) do
+    decr l;
+  done;
+  sub s p (!l - p + 1)
+	  
+let split str sep =
+  let p = find str sep in
+  let len = length sep in
+  let slen = length str in
+  sub str 0 p, sub str (p + len) (slen - p - len)
+    
+let nsplit str sep = (* TODO: optimize allocations - too many re-allocations *)
+  if str = "" then []
+  else (
+    let rec nsplit str sep =
+      try
+        let s1 , s2 = split str sep in
+        s1 :: nsplit s2 sep
+      with
+          Failure "String.find" -> [str]
+    in
+    nsplit str sep
+  )
+    
+let join = concat
+  
+let slice ?(first=0) ?(last=max_int) s =
+  let clip _min _max x = max _min (min _max x) in
+  let i = clip 0 (length s)
+    (if (first<0) then (length s) + first else first)
+  and j = clip 0 (length s)
+    (if (last<0) then (length s) + last else last)
+  in
+  if i>=j || i=length s then
+    create 0
+  else
+    sub s i (j-i)
+      
+let lchop s =
+  if s = "" then "" else sub s 1 (length s - 1)
+    
+let rchop s =
+  if s = "" then "" else sub s 0 (length s - 1)
+
+let chomp ?(char='\n') s = 
+  if s = "" then "" else
+    let l = length s in
+    if get s (l-1) = char then sub s 0 (l-1)
+    else s
+    
+let of_int = string_of_int
+  
+let of_float = string_of_float
+  
+let of_char = make 1
+  
+let to_int = int_of_string
+	
+let to_float = float_of_string
+
+let replace_chars f s =
+  let len = length s in
+  let tlen = ref 0 in
+  let rec loop i acc =
+    if i = len then
+      acc
+    else 
+      let s = f (unsafe_get s i) in
+      tlen := !tlen + length s;
+      loop (i+1) (s :: acc)
+  in
+  let strs = loop 0 [] in
+  let sbuf = create !tlen in
+  let pos = ref !tlen in
+  let rec loop2 = function
+    | [] -> ()
+    | s :: acc ->
+        let len = length s in
+        pos := !pos - len;
+        blit s 0 sbuf !pos len;
+        loop2 acc
+  in
+  loop2 strs;
+  sbuf
+
+let replace ~str ~sub ~by =
+  try
+    let i = find str sub in
+    (true, (slice ~last:i str) ^ by ^ 
+       (slice ~first:(i+(length sub)) str))
+  with
+      Failure "String.find" -> (false, copy str)
+
+let to_enum s =
+        let l = length s in
+        let rec make i =
+                Enum.make
+                ~next:(fun () ->
+                        if !i = l then
+                                raise Enum.No_more_elements
+                        else
+                                let p = !i in
+                                incr i;
+                                unsafe_get s p
+                        )
+                ~count:(fun () -> l - !i)
+                ~clone:(fun () -> make (ref !i))
+        in
+        make (ref 0)
+
+let of_enum e =
+        let l = Enum.count e in
+        let s = create l in
+        let i = ref 0 in
+        Enum.iter (fun c -> unsafe_set s !i c; incr i) e;
+        s
+

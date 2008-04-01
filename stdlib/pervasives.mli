@@ -35,6 +35,10 @@ val invalid_arg : string -> 'a
 val failwith : string -> 'a
 (** Raise exception [Failure] with the given string. *)
 
+val finally : (unit -> unit) -> ('a -> 'b) -> 'a -> 'b 
+(** [finally fend f x] calls [f x] and then [fend()] even if [f x] raised
+	an exception. *)
+
 exception Exit
 (** The [Exit] exception is not raised by any library function.  It is
     provided for use in your programs.*)

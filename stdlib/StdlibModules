@@ -45,4 +45,5 @@ STDLIB_MODULES=\
   string \
   stringLabels \
   sys \
+  typestruct \
   weak

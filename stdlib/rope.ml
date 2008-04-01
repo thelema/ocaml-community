@@ -301,7 +301,7 @@ let iteri f r =
 let rec bulk_iter f = function
     Empty -> ()
   | Leaf s -> f s
-  | Concat(l,_,r,_,_) -> iter f l; iter f r
+  | Concat(l,_,r,_,_) -> bulk_iter f l; bulk_iter f r
 
 let rec rangeiter f start len = function
     Empty -> if start <> 0 || len <> 0 then raise Out_of_bounds

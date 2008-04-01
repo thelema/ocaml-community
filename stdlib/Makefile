@@ -25,7 +25,8 @@ OPTCOMPFLAGS=-warn-error A -nostdlib -g
 CAMLDEP=../boot/ocamlrun ../tools/ocamldep
 
 OBJS=pervasives.cmo $(OTHERS)
-OTHERS=array.cmo list.cmo char.cmo string.cmo \
+OTHERS=enum.cmo bitSet.cmo \
+  array.cmo list.cmo char.cmo string.cmo \
   uChar.cmo uTF8.cmo rope.cmo sys.cmo \
   hashtbl.cmo vect.cmo sort.cmo marshal.cmo obj.cmo \
   int32.cmo int64.cmo nativeint.cmo \
@@ -35,7 +36,7 @@ OTHERS=array.cmo list.cmo char.cmo string.cmo \
   arg.cmo printexc.cmo gc.cmo \
   digest.cmo random.cmo callback.cmo \
   camlinternalOO.cmo oo.cmo camlinternalMod.cmo \
-  genlex.cmo weak.cmo \
+  genlex.cmo weak.cmo typestruct.cmo \
   lazy.cmo filename.cmo complex.cmo \
   arrayLabels.cmo listLabels.cmo stringLabels.cmo moreLabels.cmo stdLabels.cmo
 
