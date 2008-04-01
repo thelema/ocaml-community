@@ -32,6 +32,8 @@ complex.cmo: complex.cmi
 complex.cmx: complex.cmi 
 digest.cmo: string.cmi printf.cmi digest.cmi 
 digest.cmx: string.cmx printf.cmx digest.cmi 
+enum.cmo: enum.cmi
+enum.cmx: enum.cmi
 filename.cmo: sys.cmi string.cmi random.cmi printf.cmi buffer.cmi \
     filename.cmi 
 filename.cmx: sys.cmx string.cmx random.cmx printf.cmx buffer.cmx \
