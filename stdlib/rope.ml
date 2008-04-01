@@ -43,13 +43,13 @@ type t =
     Empty
   (* left, left size, right, right size, height *)
   | Concat of t * int * t * int * int
-  | Leaf of string
+  | Leaf of UTF8.t
 
 type forest_element = { mutable c : t; mutable len : int }
 
-let str_append = (^)
-let empty_str = ""
-let string_of_string_list l = String.concat "" l
+let str_append = UTF8.append
+let empty_str = UTF8.empty
+let string_of_string_list l = UTF8.join l
 
 module STRING = UTF8
 

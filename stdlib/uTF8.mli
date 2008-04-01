@@ -23,7 +23,7 @@
 *)
 
 (** UTF-8 encoded Unicode strings. The type is normal string. *)
-type t = string
+type t (* = string -- no access to internals *)
 
 exception Malformed_code
 
@@ -118,3 +118,9 @@ val iter : (UChar.t -> unit) -> t -> unit
    0 if [s1] = [s2],
    a negative integer if [s1] < [s2]. *)
 val compare : t -> t -> int
+
+val append : t -> t -> t
+
+val empty : t
+
+val join : t list -> t

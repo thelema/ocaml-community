@@ -163,15 +163,17 @@ let copy_set s n c =
   let i = nth s n in let j = next s i in
   String.splice s i (j-i) (of_char c)
 
-let unsafe_buf_set s e n c = 
+(* shouldn't do this - requires resizing string
+let unsafe_buf_set s str_end n c = 
   let s1 = of_char c and i = nth s n in 
   let j = next s i 
   and j' = i + String.length s1 in
-  let e' = e - j + j'  in
+  let e' = str_end - j + j'  in
   if e' > String.length s then failwith "Buffer too small";
   String.blit s j s j' (e-j);
   String.blit s1 0 s i (String.length s1);
   e'
+*)
 
 let sub s n len =
   let i = nth s n in 
@@ -200,6 +202,12 @@ let iter proc s = iter_aux proc s 0
 let compare s1 s2 = Pervasives.compare s1 s2
 
 let copy = String.copy
+
+let append s1 s2 = s1 ^ s2
+
+let empty = ""
+
+let join l = String.concat "" l
 
 exception Malformed_code
 
