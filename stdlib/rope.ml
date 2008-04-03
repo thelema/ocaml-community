@@ -215,7 +215,7 @@ let rec set i v = function
       if i < cl then concat (set i v l) r
       else concat l (set (i - cl) v r)
 
-let of_string = function
+let of_ustring = function
     s when STRING.length s = 0 -> Empty
   | s ->
       let min (x:int) (y:int) = if x <= y then x else y in
@@ -236,7 +236,7 @@ let rec make len c =
     if len = 0 then Empty
     else if len <= leaf_size then Leaf (STRING.make len c)
     else
-      let rope = concatloop len 2 (of_string (STRING.make 1 c)) in
+      let rope = concatloop len 2 (of_ustring (STRING.make 1 c)) in
         concat rope (make (len - length rope) c)
 
 let rec sub start len = function
@@ -274,7 +274,7 @@ let insert start rope r =
 let remove start len r =
   concat (sub 0 start r) (sub (start + len) (length r - start - len) r)
 
-let to_string r =
+let to_ustring r =
   let rec strings l = function
       Empty -> l
     | Leaf s -> s :: l
@@ -291,9 +291,8 @@ let iteri f r =
   let rec aux f i = function
     Empty -> ()
   | Leaf s ->
-      for j = 0 to STRING.length s - 1 do
-        f (i + j) (STRING.unsafe_get s j)
-      done
+      let e = STRING.to_enum s in
+      Enum.iteri (fun j c -> f (i+j) c) e
   | Concat(l,cl,r,_,_) -> aux f i l; aux f (i + cl) r
   in
     aux f 0 r
@@ -309,8 +308,8 @@ let rec rangeiter f start len = function
       let n = start + len in
       let lens = STRING.length s in
       if start >= 0 && len >= 0 && n <= lens then
-        for i = start to n - 1 do
-          f (STRING.unsafe_get s i)
+	for i = start to n - 1 do 
+          f (STRING.unsafe_get s i) (*TODO: use enum to iterate efficiently*)
         done
       else raise Out_of_bounds
   | Concat(l,cl,r,cr,_) ->
@@ -330,11 +329,7 @@ let rec rangeiter f start len = function
 let rec fold f a = function
     Empty -> a
   | Leaf s ->
-      let acc = ref a in
-        for i = 0 to STRING.length s - 1 do
-          acc := f !acc (STRING.unsafe_get s i)
-        done;
-        !acc
+      Enum.fold f a (STRING.to_enum s)
   | Concat(l,_,r,_,_) -> fold f (fold f a l) r
 
 (* =end *)

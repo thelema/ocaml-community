@@ -39,9 +39,7 @@ val validate : t -> unit
 (** [get s n] returns [n]-th Unicode character of [s].
    The call requires O(n)-time. *)
 val get : t -> int -> UChar.t
-
-val unsafe_get : t -> int -> UChar.t
-val unsafe_buf_set : t -> int -> int -> UChar.t -> int
+val unsafe_get : t -> int -> UChar.t (* not really unsafe *)
 
 val copy : t -> t
 val copy_set : t -> int -> UChar.t -> t
@@ -124,3 +122,11 @@ val append : t -> t -> t
 val empty : t
 
 val join : t list -> t
+
+val of_string : string -> t
+
+val to_string : t -> string
+
+val of_enum : UChar.t Enum.t -> t
+
+val to_enum : t -> UChar.t Enum.t

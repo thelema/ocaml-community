@@ -110,8 +110,8 @@ sys.cmo: sys.cmi
 sys.cmx: sys.cmi 
 uChar.cmo: uChar.cmi
 uChar.cmx: uChar.cmi
-uTF8.cmo: uChar.cmi uTF8.cmi
-uTF8.cmx: uChar.cmx uTF8.cmi
+uTF8.cmo: buffer.cmi uChar.cmi uTF8.cmi
+uTF8.cmx: buffer.cmx uChar.cmx uTF8.cmi
 vect.cmo: array.cmi vect.cmi
 vect.cmx: array.cmx vect.cmi
 typestruct.cmo: typestruct.cmi

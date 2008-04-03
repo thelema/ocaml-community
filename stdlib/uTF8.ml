@@ -241,3 +241,33 @@ let validate s =
       main (i + 6)
     else raise Malformed_code in
   main 0
+
+(* End Yoriyuki's code *)
+
+let of_string s = validate s; s
+
+let to_string s = s
+
+let to_enum us = 
+  let l = length us in
+  let rec make i =
+    Enum.make
+      ~next:(fun () ->
+               if !i = l then
+                 raise Enum.No_more_elements
+               else
+                 let p = !i in
+                 i := next us !i;
+                 look us p
+            )
+      ~count:(fun () -> l - !i)
+      ~clone:(fun () -> make (ref !i))
+  in
+  make (ref 0)
+
+let of_enum e =
+  let buf = Buffer.create 10 in
+  Enum.iter (fun c -> Buffer.add_string buf (of_char c)) e;
+  Buffer.contents buf
+
+

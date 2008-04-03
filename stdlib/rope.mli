@@ -83,11 +83,11 @@ val max_length : int
 val empty : t
   (** The empty rope. *)
 
-val of_string : UTF8.t -> t
+val of_ustring : UTF8.t -> t
   (** [of_string s] returns a rope corresponding to the string [s].
       Operates in [O(n)] time. *)
 
-val to_string : t -> UTF8.t
+val to_ustring : t -> UTF8.t
   (**  [to_string r] returns the string corresponding to the rope [r]. *)
 
 val make : int -> UChar.t -> t
