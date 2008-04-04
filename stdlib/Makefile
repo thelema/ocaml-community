@@ -31,7 +31,7 @@ OTHERS=enum.cmo bitSet.cmo \
   int32.cmo int64.cmo nativeint.cmo \
   lexing.cmo parsing.cmo \
   set.cmo map.cmo stack.cmo queue.cmo stream.cmo buffer.cmo \
-  uChar.cmo uTF8.cmo rope.cmo \
+  uChar.cmo uTF8.cmo rope.cmo IO.cmo \
   printf.cmo format.cmo scanf.cmo \
   arg.cmo printexc.cmo gc.cmo \
   digest.cmo random.cmo callback.cmo \

@@ -329,7 +329,7 @@ let rec rangeiter f start len = function
 let rec fold f a = function
     Empty -> a
   | Leaf s ->
-      Enum.fold f a (STRING.to_enum s)
+      Enum.fold (fun a c -> f c a) a (STRING.to_enum s)
   | Concat(l,_,r,_,_) -> fold f (fold f a l) r
 
 (* =end *)

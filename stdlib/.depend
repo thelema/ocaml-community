@@ -50,6 +50,8 @@ int32.cmo: pervasives.cmi int32.cmi
 int32.cmx: pervasives.cmx int32.cmi 
 int64.cmo: pervasives.cmi int64.cmi 
 int64.cmx: pervasives.cmx int64.cmi 
+IO.cmo: pervasives.cmi enum.cmi string.cmi printf.cmi list.cmi buffer.cmi int32.cmi int64.cmi char.cmi IO.cmi
+IO.cmx: pervasives.cmx enum.cmx string.cmx printf.cmx list.cmx buffer.cmx int32.cmx int64.cmx char.cmx IO.cmi
 lazy.cmo: obj.cmi lazy.cmi 
 lazy.cmx: obj.cmx lazy.cmi 
 lexing.cmo: sys.cmi string.cmi array.cmi lexing.cmi 
