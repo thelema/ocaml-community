@@ -228,7 +228,7 @@ let find_first_set b n =
       else
         Some ((find_lsb byte) + (byte_ndx lsl log_int_size) + bit_offs) in
   find_bit (n lsr log_int_size) (n land int_size)
-(*      
+
 let enum t =
   let rec make n =
     let cur = ref n in
@@ -245,7 +245,7 @@ let enum t =
       ~clone:(fun () -> make !cur)
   in
   make 0
-*)
+
 let raw_create size = 
   let b = bcreate size in
   bfill b 0 size 0;
