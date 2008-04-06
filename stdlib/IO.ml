@@ -145,8 +145,10 @@ let output o s p l =
 	if p + l > sl || p < 0 || l < 0 then invalid_arg "IO.output";
 	o.out_output s p l
 
+(*
 let printf o fmt =
 	Printf.kprintf (fun s -> nwrite o s) fmt
+*)
 
 let flush o = o.out_flush()
 
@@ -678,7 +680,7 @@ let flush_bits b =
 
 (* -------------------------------------------------------------- *)
 (* Generic IO *)
-
+(*
 class in_channel ch =
   object
 	method input s pos len = input ch s pos len
@@ -767,3 +769,4 @@ let from_out_chars ch =
 		~output
 		~flush:ch#flush
 		~close:ch#close_out
+*)
