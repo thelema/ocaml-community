@@ -29,15 +29,15 @@ OTHERS=enum.cmo bitSet.cmo \
   array.cmo list.cmo char.cmo string.cmo sys.cmo \
   hashtbl.cmo vect.cmo sort.cmo marshal.cmo obj.cmo \
   int32.cmo int64.cmo nativeint.cmo \
-  lexing.cmo parsing.cmo \
+  lexing.cmo parsing.cmo avlTree.cmo iSet.cmo iMap.cmo \
   set.cmo map.cmo stack.cmo queue.cmo stream.cmo buffer.cmo \
-  uChar.cmo uTF8.cmo rope.cmo IO.cmo \
+  uChar.cmo uTF8.cmo rope.cmo \
   printf.cmo format.cmo scanf.cmo \
   arg.cmo printexc.cmo gc.cmo \
   digest.cmo random.cmo callback.cmo \
   camlinternalOO.cmo oo.cmo camlinternalMod.cmo \
   genlex.cmo weak.cmo typestruct.cmo \
-  lazy.cmo filename.cmo complex.cmo \
+  lazy.cmo filename.cmo complex.cmo IO.cmo \
   arrayLabels.cmo listLabels.cmo stringLabels.cmo moreLabels.cmo stdLabels.cmo
 
 all: stdlib.cma std_exit.cmo camlheader camlheader_ur
@@ -95,6 +95,9 @@ camlheader camlheader_ur: header.c ../config/Makefile
 sys.ml: sys.mlp ../VERSION
 	sed -e "s|%%VERSION%%|`head -1 ../VERSION`|" sys.mlp >sys.ml
 
+rope.cmo: rope.ml
+	$(CAMLC) $(COMPFLAGS) -I ./unicode -I . -c rope.ml
+
 clean::
 	rm -f sys.ml
 
@@ -136,4 +139,4 @@ clean::
 include .depend
 
 depend:
-	$(CAMLDEP) *.mli *.ml > .depend
+	$(CAMLDEP) *.mli *.ml unicode/*.ml unicode/*.mli > .depend
