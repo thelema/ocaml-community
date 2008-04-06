@@ -135,8 +135,10 @@ val create_out :
 
 (** {6 Utilities} *)
 
+(*
 val printf : 'a output -> ('b, unit, string, unit) format4 -> 'b
 (** The printf function works for any output. *)
+*)
 
 val read_all : input -> string
 (** read all the contents of the input until [No_more_input] is raised. *)
@@ -288,7 +290,7 @@ val drop_bits : in_bits -> unit
 
 	(see http://www.ocaml-programming.de/tmp/IO-Classes.html for more details).
 *)
-
+(*
 class in_channel : input ->
   object
 	method input : string -> int -> int -> int
@@ -319,3 +321,4 @@ val from_in_channel : #in_channel -> input
 val from_out_channel : #out_channel -> unit output
 val from_in_chars : #in_chars -> input
 val from_out_chars : #out_chars -> unit output
+  *)
