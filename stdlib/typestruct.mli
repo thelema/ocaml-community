@@ -2,6 +2,7 @@ module type OrderedType = sig type t val compare : t -> t -> int end
 module type ComparableType =
   sig type t val compare : t -> t -> int val equal : t -> t -> bool end
 module type PrintableType = sig type t val to_string : t -> string end
+module type HashableType = sig type t val hash : t -> int end
 module type SerializableType =
   sig type t val to_string : t -> string val of_string : string -> t end
 module type DiscreteType =
@@ -67,6 +68,7 @@ module Int :
     val to_int : int -> int
     val of_string : string -> int
     val to_string : int -> string
+    val hash : int -> int
   end
 module Float :
   sig

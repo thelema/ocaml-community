@@ -31,6 +31,12 @@ sig
   val to_string : t -> string
 end
 
+module type HashableType =
+sig
+  type t
+  val hash : t -> int
+end
+
 module type SerializableType = 
 sig
   type t
@@ -104,6 +110,8 @@ module Int = struct
   let to_int (n:int) = n
   let of_string = int_of_string
   let to_string = string_of_int
+
+  let hash (n:int) = n
 end
 
 module Float = struct
