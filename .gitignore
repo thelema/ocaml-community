@@ -1,0 +1,10 @@
+*.cmi
+*.cmo
+*.cmx
+*.o
+*.a
+*.cma
+*.cmxa
+*.so
+*~
+boot
