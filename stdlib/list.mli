@@ -347,10 +347,10 @@ val iteri : (int -> 'a -> 'b) -> 'a list -> unit
     [a0..an] are the elements of the list [l]. *)
   
 val first : 'a list -> 'a
-(** Returns the first element of a list (as [List.hd]) *)
+(** Returns the first element of a list (same as [List.hd]) *)
 
 val last : 'a list -> 'a
 (** Returns the last element of a list (not the same as [List.tl]) *)
   
 val (--) : int -> int -> int list
-(** m--n returns the list of values from m to n (excluding n) *)
+(** [m--n] returns the list of values from m to n including both endpoints. *)

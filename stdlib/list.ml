@@ -163,21 +163,6 @@ let fold_right f li init =
     | li -> fold_chunk li
   in loop 0 li
        
-let fold_right f l init =
-        let rec tail_loop acc = function
-                | [] -> acc
-                | h :: t -> tail_loop (f h acc) t
-        in
-        let rec loop n = function
-                | [] -> init
-                | h :: t ->
-                        if n < fold_right_max then
-                                f h (loop (n+1) t)
-                        else
-                                f h (tail_loop init (rev t))
-        in
-        loop 0 l
-
 let map2 f l1 l2 =
         let rec loop dst src1 src2 =
                 match src1, src2 with
@@ -216,23 +201,23 @@ let rec fold_left2 f accu l1 l2 =
   | (_, _) -> invalid_arg "List.fold_left2"
 
 let fold_right2 f l1 l2 init =
-        let rec tail_loop acc l1 l2 =
-                match l1, l2 with
-                | [] , [] -> acc
-                | h1 :: t1 , h2 :: t2 -> tail_loop (f h1 h2 acc) t1 t2
-                | _ -> invalid_arg "List.fold_right2"
-        in
-        let rec loop n l1 l2 =
-                match l1, l2 with
-                | [], [] -> init
-                | h1 :: t1, h2 :: t2 ->
-                        if n < fold_right_max then
-                                f h1 h2 (loop (n+1) t1 t2)
-                        else
-                                f h1 h2 (tail_loop init (rev t1) (rev t2))
-                | _ -> invalid_arg "List.fold_right2"
-        in
-        loop 0 l1 l2
+  let rec fold_chunk l1 l2 =
+    let (n, init) = jump 0 l1 l2 in
+    partial_fold init l1 l2 n
+  and jump n l1 l2 = match l1,l2 with
+    | [],[] -> (n, init)
+    | _::tl, _::t2 when n < fold_right_chunk_size -> jump (n + 1) tl t2
+    | l1,l2 -> (n, fold_chunk l1 l2)
+  and partial_fold partial_init l1 l2 = function
+    | 0 -> partial_init
+    | n -> match l1,l2 with
+        | hd::tl, h2::t2 -> f hd h2 (partial_fold partial_init tl t2 (n - 1)) 
+	| _ -> assert false in
+  let rec loop n l1 l2 = match l1,l2 with
+    | [],[] -> init
+    | h :: t, h2 :: t2 when n < fold_right_max -> f h h2 (loop (n+1) t t2)
+    | l1,l2 -> fold_chunk l1 l2
+  in loop 0 l1 l2
 
 let rec for_all p = function
     [] -> true
@@ -693,5 +678,8 @@ let rec last = function
   | h :: [] -> h
   | _ :: t -> last t
 
-(* in pervasives?  3 List.-- 5 doesn't have the ring that 3--5 has.  Also, right endpoint version?  --]?  *)
-let rec (--) = fun m n -> if m >= n then [] else m::((m + 1) -- n)
+(* in pervasives?  3 List.-- 5 doesn't have the ring that 3--5 has.  
+   Also, no-endpoint versions?  --]? [--? *)
+let (--) m n = 
+  let rec loop n acc = if m > n then acc else loop (n-1) (n::acc) in
+  loop n []
