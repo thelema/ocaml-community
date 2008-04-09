@@ -1,5 +1,8 @@
 IO.cmi: enum.cmi 
 array.cmi: enum.cmi 
+bArray.cmi: dim.cmi 
+bString.cmi: dim.cmi 
+bitSet.cmi: enum.cmi 
 camlinternalMod.cmi: obj.cmi 
 camlinternalOO.cmi: obj.cmi 
 format.cmi: buffer.cmi 
@@ -27,8 +30,12 @@ arrayLabels.cmo: array.cmi arrayLabels.cmi
 arrayLabels.cmx: array.cmx arrayLabels.cmi 
 avlTree.cmo: avlTree.cmi 
 avlTree.cmx: avlTree.cmi 
-bitSet.cmo: bitSet.cmi 
-bitSet.cmx: bitSet.cmi 
+bArray.cmo: dim.cmi array.cmi bArray.cmi 
+bArray.cmx: dim.cmx array.cmx bArray.cmi 
+bString.cmo: string.cmi dim.cmi bString.cmi 
+bString.cmx: string.cmx dim.cmx bString.cmi 
+bitSet.cmo: enum.cmi bitSet.cmi 
+bitSet.cmx: enum.cmx bitSet.cmi 
 buffer.cmo: sys.cmi string.cmi buffer.cmi 
 buffer.cmx: sys.cmx string.cmx buffer.cmi 
 callback.cmo: obj.cmi callback.cmi 
@@ -45,6 +52,8 @@ complex.cmo: complex.cmi
 complex.cmx: complex.cmi 
 digest.cmo: string.cmi printf.cmi digest.cmi 
 digest.cmx: string.cmx printf.cmx digest.cmi 
+dim.cmo: dim.cmi 
+dim.cmx: dim.cmi 
 enum.cmo: enum.cmi 
 enum.cmx: enum.cmi 
 filename.cmo: sys.cmi string.cmi random.cmi printf.cmi list.cmi buffer.cmi \

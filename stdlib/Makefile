@@ -32,6 +32,7 @@ OTHERS=enum.cmo bitSet.cmo \
   lexing.cmo parsing.cmo avlTree.cmo iSet.cmo iMap.cmo \
   set.cmo map.cmo stack.cmo queue.cmo stream.cmo buffer.cmo \
   uChar.cmo uTF8.cmo rope.cmo \
+  dim.cmo bArray.cmo bString.cmo \
   printf.cmo format.cmo scanf.cmo \
   arg.cmo printexc.cmo gc.cmo \
   digest.cmo random.cmo callback.cmo \
