@@ -182,7 +182,7 @@ let equals t1 t2 =
 	compare t1 t2 = 0
 
 let partial_count t x =
-	let rec nbits x =
+	let rec nbits x = (* TODO: speed up with table lookup? *)
 		if x = 0 then
 			0
 		else if fast_bool (x land 1) then
