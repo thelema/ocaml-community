@@ -8,3 +8,4 @@
 *.so
 *~
 boot
+_build
