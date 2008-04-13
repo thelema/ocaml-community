@@ -695,3 +695,19 @@ let rec last = function
 
 (* in pervasives?  3 List.-- 5 doesn't have the ring that 3--5 has.  Also, right endpoint version?  --]?  *)
 let rec (--) = fun m n -> if m >= n then [] else m::((m + 1) -- n)
+
+let unfold f seed = 
+  match f seed with
+      None -> []
+    | Some (s', e) ->
+	let rec loop dst s = 
+	  match f s with
+	      None -> ()
+	    | Some (s',e) -> 
+		let r = { hd = e; tl = [] } in
+		dst.tl <- inj r;
+		loop r s'
+	in
+	let r = { hd = e; tl = [] } in
+	loop r s';
+	inj r
