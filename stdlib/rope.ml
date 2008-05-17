@@ -332,8 +332,8 @@ let rec fold f a = function
       Enum.fold (fun a c -> f c a) a (STRING.to_enum s)
   | Concat(l,_,r,_,_) -> fold f (fold f a l) r
 
-(*
+
 let of_latin1 s = of_ustring (CharEncoding.recode_string CharEncoding.latin1 CharEncoding.utf8 s)
-*)
+
 
 (* =end *)

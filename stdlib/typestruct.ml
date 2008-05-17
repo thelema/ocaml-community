@@ -103,7 +103,8 @@ module Int = struct
   let pow = generic_pow 0 1 (fun n -> n asr 1) (fun n -> n land 1) ( * )
 
   let min_num, max_num = min_int, max_int
-  let compare = (-)
+  let compare (i:int) (j:int) = 
+    if i = j then 0 else if i < j then -1 else 1
   let equal (a:int) b = a = b
 
   let of_int (n:int) = n

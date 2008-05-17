@@ -1,5 +1,6 @@
 IO.cmi: enum.cmi 
 array.cmi: enum.cmi 
+bitSet.cmi: enum.cmi 
 camlinternalMod.cmi: obj.cmi 
 camlinternalOO.cmi: obj.cmi 
 format.cmi: buffer.cmi 
@@ -27,8 +28,8 @@ arrayLabels.cmo: array.cmi arrayLabels.cmi
 arrayLabels.cmx: array.cmx arrayLabels.cmi 
 avlTree.cmo: avlTree.cmi 
 avlTree.cmx: avlTree.cmi 
-bitSet.cmo: bitSet.cmi 
-bitSet.cmx: bitSet.cmi 
+bitSet.cmo: enum.cmi bitSet.cmi 
+bitSet.cmx: enum.cmx bitSet.cmi 
 buffer.cmo: sys.cmi string.cmi buffer.cmi 
 buffer.cmx: sys.cmx string.cmx buffer.cmi 
 callback.cmo: obj.cmi callback.cmi 
@@ -103,8 +104,8 @@ random.cmo: string.cmi pervasives.cmi nativeint.cmi int64.cmi int32.cmi \
     digest.cmi char.cmi array.cmi random.cmi 
 random.cmx: string.cmx pervasives.cmx nativeint.cmx int64.cmx int32.cmx \
     digest.cmx char.cmx array.cmx random.cmi 
-rope.cmo: uTF8.cmi enum.cmi array.cmi rope.cmi 
-rope.cmx: uTF8.cmx enum.cmx array.cmx rope.cmi 
+rope.cmo: uTF8.cmi enum.cmi unicode/charEncoding.cmi array.cmi rope.cmi 
+rope.cmx: uTF8.cmx enum.cmx unicode/charEncoding.cmx array.cmx rope.cmi 
 rope1.cmo: uTF8.cmi string.cmi array.cmi 
 rope1.cmx: uTF8.cmx string.cmx array.cmx 
 scanf.cmo: string.cmi printf.cmi obj.cmi list.cmi hashtbl.cmi buffer.cmi \
@@ -139,21 +140,26 @@ vect.cmo: array.cmi vect.cmi
 vect.cmx: array.cmx vect.cmi 
 weak.cmo: sys.cmi obj.cmi hashtbl.cmi array.cmi weak.cmi 
 weak.cmx: sys.cmx obj.cmx hashtbl.cmx array.cmx weak.cmi 
-unicode/charEncoding.cmo: weak.cmi uChar.cmi string.cmi stream.cmi queue.cmi \
-    pervasives.cmi list.cmi hashtbl.cmi char.cmi buffer.cmi \
-    unicode/charEncoding.cmi 
-unicode/charEncoding.cmx: weak.cmx uChar.cmx string.cmx stream.cmx queue.cmx \
-    pervasives.cmx list.cmx hashtbl.cmx char.cmx buffer.cmx \
-    unicode/charEncoding.cmi 
-unicode/charmap.cmo: weak.cmi hashtbl.cmi filename.cmi unicode/charmap.cmi 
-unicode/charmap.cmx: weak.cmx hashtbl.cmx filename.cmx unicode/charmap.cmi 
+unicode/charmap.cmi: unicode/tbl31.cmi 
+unicode/tbl31.cmi: iSet.cmi iMap.cmi hashtbl.cmi 
+unicode/unicodeString.cmi: uChar.cmi 
+unicode/charEncoding.cmo: weak.cmi unicode/unimap.cmi \
+    unicode/unicodeString.cmi uChar.cmi unicode/tbl31.cmi string.cmi \
+    stream.cmi queue.cmi pervasives.cmi list.cmi hashtbl.cmi \
+    unicode/charmap.cmi char.cmi buffer.cmi unicode/charEncoding.cmi 
+unicode/charEncoding.cmx: weak.cmx unicode/unimap.cmx \
+    unicode/unicodeString.cmi uChar.cmx unicode/tbl31.cmx string.cmx \
+    stream.cmx queue.cmx pervasives.cmx list.cmx hashtbl.cmx \
+    unicode/charmap.cmx char.cmx buffer.cmx unicode/charEncoding.cmi 
+unicode/charmap.cmo: weak.cmi unicode/tbl31.cmi hashtbl.cmi filename.cmi \
+    unicode/charmap.cmi 
+unicode/charmap.cmx: weak.cmx unicode/tbl31.cmx hashtbl.cmx filename.cmx \
+    unicode/charmap.cmi 
 unicode/tbl31.cmo: weak.cmi sys.cmi string.cmi iSet.cmi iMap.cmi hashtbl.cmi \
     char.cmi avlTree.cmi array.cmi unicode/tbl31.cmi 
 unicode/tbl31.cmx: weak.cmx sys.cmx string.cmx iSet.cmx iMap.cmx hashtbl.cmx \
     char.cmx avlTree.cmx array.cmx unicode/tbl31.cmi 
-unicode/unimap.cmo: weak.cmi iMap.cmi hashtbl.cmi filename.cmi \
-    unicode/unimap.cmi 
-unicode/unimap.cmx: weak.cmx iMap.cmx hashtbl.cmx filename.cmx \
-    unicode/unimap.cmi 
-unicode/tbl31.cmi: iSet.cmi iMap.cmi hashtbl.cmi 
-unicode/unicodeString.cmi: uChar.cmi 
+unicode/unimap.cmo: weak.cmi unicode/tbl31.cmi iMap.cmi hashtbl.cmi \
+    filename.cmi unicode/unimap.cmi 
+unicode/unimap.cmx: weak.cmx unicode/tbl31.cmx iMap.cmx hashtbl.cmx \
+    filename.cmx unicode/unimap.cmi 

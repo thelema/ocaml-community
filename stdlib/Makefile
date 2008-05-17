@@ -15,14 +15,15 @@
 
 include ../config/Makefile
 
+INCLUDEDIR=-I unicode
 RUNTIME=../boot/ocamlrun
 COMPILER=../ocamlc
-CAMLC=$(RUNTIME) $(COMPILER)
-COMPFLAGS=-g -warn-error A -nostdlib
+CAMLC=$(RUNTIME) $(COMPILER) 
+COMPFLAGS=-g -warn-error A -nostdlib $(INCLUDEDIR)
 OPTCOMPILER=../ocamlopt
-CAMLOPT=$(RUNTIME) $(OPTCOMPILER)
-OPTCOMPFLAGS=-warn-error A -nostdlib -g
-CAMLDEP=../boot/ocamlrun ../tools/ocamldep
+CAMLOPT=$(RUNTIME) $(OPTCOMPILER) 
+OPTCOMPFLAGS=-warn-error A -nostdlib -g $(INCLUDEDIR)
+CAMLDEP=../boot/ocamlrun ../tools/ocamldep $(INCLUDEDIR)
 
 OBJS=pervasives.cmo $(OTHERS)
 OTHERS=enum.cmo bitSet.cmo \
@@ -31,12 +32,13 @@ OTHERS=enum.cmo bitSet.cmo \
   int32.cmo int64.cmo nativeint.cmo \
   lexing.cmo parsing.cmo avlTree.cmo iSet.cmo iMap.cmo \
   set.cmo map.cmo stack.cmo queue.cmo stream.cmo buffer.cmo \
-  uChar.cmo uTF8.cmo rope.cmo \
   printf.cmo format.cmo scanf.cmo \
   arg.cmo printexc.cmo gc.cmo \
   digest.cmo random.cmo callback.cmo \
   camlinternalOO.cmo oo.cmo camlinternalMod.cmo \
   genlex.cmo weak.cmo typestruct.cmo \
+  unicode/charEncoding.cmo \
+  uChar.cmo uTF8.cmo rope.cmo \
   lazy.cmo filename.cmo complex.cmo IO.cmo \
   arrayLabels.cmo listLabels.cmo stringLabels.cmo moreLabels.cmo stdLabels.cmo
 
@@ -96,7 +98,7 @@ sys.ml: sys.mlp ../VERSION
 	sed -e "s|%%VERSION%%|`head -1 ../VERSION`|" sys.mlp >sys.ml
 
 rope.cmo: rope.ml
-	$(CAMLC) $(COMPFLAGS) -I ./unicode -I . -c rope.ml
+	$(CAMLC) $(COMPFLAGS) -I . -c rope.ml
 
 clean::
 	rm -f sys.ml
@@ -135,8 +137,9 @@ $(OTHERS:.cmo=.p.cmx) std_exit.p.cmx: pervasives.cmx
 clean::
 	rm -f *.cm* *.o *.a
 	rm -f *~
+	rm -f unicode/*.cm*
 
 include .depend
 
 depend:
-	$(CAMLDEP) *.mli *.ml unicode/*.ml unicode/*.mli > .depend
+	$(CAMLDEP) *.mli *.ml unicode/*.mli unicode/*.ml > .depend

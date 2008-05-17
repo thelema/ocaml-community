@@ -770,3 +770,22 @@ let from_out_chars ch =
 		~flush:ch#flush
 		~close:ch#close_out
 *)
+
+
+let input_lines ch =
+  Enum.from (fun () ->
+    try input_line ch with End_of_file -> raise Enum.No_more_elements)
+
+let input_chars ch =
+  Enum.from (fun () ->
+    try input_char ch with End_of_file -> raise Enum.No_more_elements)
+
+let input_fields ch l = 
+  let get_field () = 
+    let b = String.make l 'z' in 
+    let l1 = input ch b 0 l in
+    if l1 = 0 then raise Enum.No_more_elements 
+    else if l1 = 0 then b 
+    else String.sub b 0 l1
+  in
+  Enum.from get_field
