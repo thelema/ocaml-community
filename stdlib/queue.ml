@@ -13,6 +13,9 @@
 
 (* $Id$ *)
 
+(* break dependency on real Obj module *)
+module Obj = struct external magic : 'a -> 'b = "%identity" end
+
 exception Empty
 
 (* O'Caml currently does not allow the components of a sum type to be

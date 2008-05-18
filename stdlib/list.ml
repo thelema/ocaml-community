@@ -693,9 +693,6 @@ let rec last = function
   | h :: [] -> h
   | _ :: t -> last t
 
-(* in pervasives?  3 List.-- 5 doesn't have the ring that 3--5 has.  Also, right endpoint version?  --]?  *)
-let rec (--) = fun m n -> if m >= n then [] else m::((m + 1) -- n)
-
 let unfold f seed = 
   match f seed with
       None -> []
@@ -711,3 +708,7 @@ let unfold f seed =
 	let r = { hd = e; tl = [] } in
 	loop r s';
 	inj r
+
+let (--) m n = 
+  let rec aux i acc = if i < m then acc else aux (i-1) (i::acc) in
+  aux n []

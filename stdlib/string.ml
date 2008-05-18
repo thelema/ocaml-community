@@ -370,6 +370,7 @@ let replace ~str ~sub ~by =
   with
       Failure "String.find" -> (false, copy str)
 
+(* Removed to fix compilation bug between string and enum
 let to_enum s =
         let l = length s in
         let rec make i =
@@ -393,3 +394,4 @@ let of_enum e =
         let i = ref 0 in
         Enum.iter (fun c -> unsafe_set s !i c; incr i) e;
         s
+*)
