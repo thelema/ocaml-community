@@ -44,6 +44,35 @@
    let the compiler implement the special typing and compilation
    rules for the [lazy] keyword.
 *)
+module Obj = struct (* break module recursion *)
+  type t
+  external repr : 'a -> t = "%identity"
+  external obj : t -> 'a = "%identity"
+  external magic : 'a -> 'b = "%identity"
+  external tag : t -> int = "caml_obj_tag"
+  external set_tag : t -> int -> unit = "caml_obj_set_tag"
+  external field : t -> int -> t = "%obj_field"
+  external set_field : t -> int -> t -> unit = "%obj_set_field"
+  external new_block : int -> int -> t = "caml_obj_block"
+  let lazy_tag = 246
+  let closure_tag = 247
+  let object_tag = 248
+  let infix_tag = 249
+  let forward_tag = 250
+    
+  let no_scan_tag = 251
+    
+  let abstract_tag = 251
+  let string_tag = 252
+  let double_tag = 253
+  let double_array_tag = 254
+  let custom_tag = 255
+  let final_tag = custom_tag
+    
+    
+  let int_tag = 1000
+  let out_of_heap_tag = 1001
+end
 
 type 'a t = 'a lazy_t;;
 exception Undefined;;

@@ -678,8 +678,22 @@ let rec last = function
   | h :: [] -> h
   | _ :: t -> last t
 
-(* in pervasives?  3 List.-- 5 doesn't have the ring that 3--5 has.  
-   Also, no-endpoint versions?  --]? [--? *)
+let unfold f seed = 
+  match f seed with
+      None -> []
+    | Some (s', e) ->
+	let rec loop dst s = 
+	  match f s with
+	      None -> ()
+	    | Some (s',e) -> 
+		let r = { hd = e; tl = [] } in
+		dst.tl <- inj r;
+		loop r s'
+	in
+	let r = { hd = e; tl = [] } in
+	loop r s';
+	inj r
+
 let (--) m n = 
-  let rec loop n acc = if m > n then acc else loop (n-1) (n::acc) in
-  loop n []
+  let rec aux i acc = if i < m then acc else aux (i-1) (i::acc) in
+  aux n []

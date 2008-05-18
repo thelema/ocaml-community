@@ -162,6 +162,16 @@ let fold f h init =
   done;
   !accu
 
+let dump ht = 
+  let b = Buffer.create (5 * length ht) in
+  let add s = Buffer.add_string b s in
+  let add_entry k d = 
+    add "( "; add (Obj.dump k); add "=> "; add (Obj.dump d); add " ) " in
+  iter add_entry ht;
+  Buffer.contents b
+
+let print ht = print_endline (dump ht)
+
 (* Functorial interface *)
 
 module type HashedType =

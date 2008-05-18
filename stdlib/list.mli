@@ -354,3 +354,6 @@ val last : 'a list -> 'a
   
 val (--) : int -> int -> int list
 (** [m--n] returns the list of values from m to n including both endpoints. *)
+
+val unfold : ('a -> ('a * 'b) option) -> 'a -> 'b list
+(** creates a list given an initial state and an unfolding function, which returns [None] to signal the end of the list and [Some (s, e)] to return a new state and the next element of the list. *)

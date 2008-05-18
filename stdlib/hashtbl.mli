@@ -97,6 +97,12 @@ val length : ('a, 'b) t -> int
    Multiple bindings are counted multiply, so [Hashtbl.length]
    gives the number of times [Hashtbl.iter] calls its first argument. *)
 
+val dump : ('a, 'b) t -> string
+(** [Hashtbl.dump tbl] dumps the contents of the hashtbl to a string,
+    a bit more intelligently than just Obj.dump on the hashtbl. *)
+
+val print : ('a, 'b) t -> unit
+(** As Obj.print, only more appropriate for the hashtbl *)
 
 (** {6 Functorial interface} *)
 

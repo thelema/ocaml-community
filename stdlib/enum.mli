@@ -1,6 +1,7 @@
 (* 
  * Enum - enumeration over abstract collection of elements.
  * Copyright (C) 2003 Nicolas Cannasse
+ *               2008 David Teller (contributor)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,7 +18,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *)
-
 (** Enumeration over abstract collection of elements.
 
  Enumerations are entirely functional and most of the operations do not
@@ -106,6 +106,17 @@ val force : 'a t -> unit
   of enumerated elements is constructed and [e] will now enumerate over
   that data structure. *)
 
+val drop : int -> 'a t -> unit
+(** [drop n e] removes the first [n] element from the enumeration, if any. *)
+
+val take_while : ('a -> bool) -> 'a t -> 'a t
+  (** [take_while f e] produces a new enumeration in which only remain
+      the first few elements [x] of [e] such that [f x] *)
+
+val drop_while : ('a -> bool) -> 'a t -> 'a t
+  (** [drop_while p e] produces a new enumeration in which only 
+      all the first elements such that [f e] have been junked.*)
+
 (** {6 Lazy constructors}
 
  These functions are lazy which means that they will create a new modified
@@ -154,6 +165,10 @@ exception No_more_elements
   other function specified in the interface.
 *)
 
+exception Infinite_enum
+(** As a convenience for debugging, this exception {i may} be raised by 
+    the [count] function of [make] when attempting to count an infinite enum.*)
+
 val empty : unit -> 'a t
 (** The empty enumeration : contains no element *)
 
@@ -163,7 +178,8 @@ val make : next:(unit -> 'a) -> count:(unit -> int) -> clone:(unit -> 'a t) -> '
 	enumeration or raise [No_more_elements] if the underlying data structure
 	does not have any more elements to enumerate.}
 	{li the [count] function {i shall} return the actual number of remaining
-	elements in the enumeration.}
+	elements in the enumeration or {i may} raise [Infinite_enum] if it is known
+        that the enumeration is infinite.}
 	{li the [clone] function {i shall} create a clone of the enumeration
 	such as operations on the original enumeration will not affect the
 	clone. }}
@@ -176,13 +192,54 @@ val from : (unit -> 'a) -> 'a t
 (** [from next] creates an enumeration from the [next] function.
  [next] {i shall} return the next element of the enumeration or raise
  [No_more_elements] when no more elements can be enumerated. Since the
- enumeration definition is incomplete, a call to [clone] or [count] will
- result in a call to [force] that will enumerate all elements in order to
+ enumeration definition is incomplete, a call to [count] will result in 
+ a call to [force] that will enumerate all elements in order to
  return a correct value. *)
+
+val from_while : (unit -> 'a option) -> 'a t
+(** [from_while next] creates an enumeration from the [next] function.
+    [next] {i shall} return [Some x] where [x] is the next element of the 
+    enumeration or [None] when no more elements can be enumerated. Since the
+    enumeration definition is incomplete, a call to [clone] or [count] will
+    result in a call to [force] that will enumerate all elements in order to
+    return a correct value. *)
+
+val from_loop: 'b -> ('b -> ('a * 'b)) -> 'a t
+  (**[from_loop data next] creates a (possibly infinite) enumeration from
+     the successive results of applying [next] to [data], then to the
+     result, etc. The list ends whenever the function raises 
+     {!LazyList.No_more_elements}*)
+
+val seq : 'a -> ('a -> 'a) -> ('a -> bool) -> 'a t
+  (** [seq init step cond] creates a sequence of data, which starts
+      from [init],  extends by [step],  until the condition [cond]
+      fails. E.g. [seq 1 ((+) 1) ((>) 100)] returns [1, 2, ... 99]. If [cond
+      init] is false, the result is empty. *)
+
+
+val seq_hide: 'b -> ('b -> ('a * 'b) option) -> 'a t
+  (**More powerful version of [seq], with the ability of hiding data.
+
+     [seq_hide data next] creates a (possibly infinite) enumeration from
+     the successive results of applying [next] to [data], then to the
+     result, etc. The list ends whenever the function returns [None]*)
 
 val init : int -> (int -> 'a) -> 'a t
 (** [init n f] creates a new enumeration over elements
   [f 0, f 1, ..., f (n-1)] *)
+
+val singleton : 'a -> 'a t
+(** Create an enumeration consisting in exactly one element.*)
+
+val repeat : ?times:int -> 'a -> 'a t
+  (** [repeat ~times:n x] creates a enum sequence filled with [n] times of
+      [x]. It return infinite enum when [~times] is absent. It returns empty
+      enum when [times <= 0] *)
+
+val cycle : ?times:int -> 'a t -> 'a t
+  (** [cycle] is similar to [repeat], except that the content to fill is a
+      subenum rather than a single element. Note that [times] represents the
+      times of repeating not the length of enum. *) 
 
 (** {6 Counting} *)
 
@@ -199,3 +256,72 @@ val fast_count : 'a t -> bool
     function that will give an hint about [count] implementation. Basically, if
     the enumeration has been created with [make] or [init] or if [force] has
     been called on it, then [fast_count] will return true. *)
+
+
+(**
+   {6 Utilities }
+*)
+val range : ?until:int -> int -> int t
+(** [range p until:q] creates an enumeration of integers [[p, p+1, ..., q]].
+    If [until] is omitted, the enumeration is not bounded. Behaviour is 
+    not-specified once [max_int] has been reached.*)
+
+val ( -- ) : int -> int -> int t
+(** As [range], without the label. 
+
+    [5 -- 10] is the enumeration 5,6,7,8,9,10.
+    [10 -- 5] is the empty enumeration*)
+
+val ( --- ) : int -> int -> int t
+(** As [--], but accepts enumerations in reverse order.
+
+    [5 --- 10] is the enumeration 5,6,7,8,9,10.
+    [10 --- 5] is the enumeration 10,9,8,7,6,5.*)
+
+val ( ~~ ) : char -> char -> char t
+(** As ( -- ), but for characters.*)
+
+
+val switchn: int -> ('a -> int) -> 'a t -> 'a t array
+  (** [switchn] is the array version of [switch]. [switch n f fl] split [fl] to an array of [n] enums, [f] is
+      applied to each element of [fl] to decide the id of its destination
+      enum. *)
+
+val switch : ('a -> bool) -> 'a t -> 'a t * 'a t
+  (** [switch test enum] split [enum] into two enums, where the first enum have
+      all the elements satisfying [test], the second enum is opposite. The
+      order of elements in the source enum is preserved. *)
+
+
+module ExceptionLess : sig
+  val find : ('a -> bool) -> 'a t -> 'a option
+    (** [find f e] returns [Some x] where [x] is the first element [x] of [e] 
+	such that [f x] returns [true], consuming the enumeration up to and 
+	including the found element, or [None] if no such element exists
+	in the enumeration, consuming the whole enumeration in the search.
+	
+	Since [find] consumes a prefix of the enumeration, it can be used several 
+	times on the same enumeration to find the next element. *)
+
+
+end
+
+(**/**)
+
+(** {6 For system use only, not for the casual user} 
+
+    For compatibility with [Stream]
+*)
+
+val iapp : 'a t -> 'a t -> 'a t
+val icons : 'a -> 'a t -> 'a t
+val ising : 'a -> 'a t
+
+val lapp : (unit -> 'a t) -> 'a t -> 'a t
+val lcons : (unit -> 'a) -> 'a t -> 'a t
+val lsing : (unit -> 'a) -> 'a t
+
+val slazy : (unit -> 'a t) -> 'a t
+
+
+(**/**)
