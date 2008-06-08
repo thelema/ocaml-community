@@ -43,6 +43,10 @@ exception Input_closed
 exception Output_closed
 (** This exception is raised when reading on a closed output. *)
 
+val apply_enum : ('a -> 'b) -> 'a -> 'b
+(** [apply_enum f x] applies [f] to [x] and converts exceptions
+    [No_more_input] and [Input_closed] to [Enum.No_more_elements]*)
+
 (** {6 Standard API} *)
 
 val read : input -> char
@@ -322,3 +326,67 @@ val from_out_channel : #out_channel -> unit output
 val from_in_chars : #in_chars -> input
 val from_out_chars : #out_chars -> unit output
   *)
+
+val enum_byte : input -> int Enum.t
+(** Read an unsigned 8-bit integer. *)
+
+val enum_signed_byte : input -> int Enum.t
+(** Read an signed 8-bit integer. *)
+
+val enum_ui16 : input -> int Enum.t
+(** Read an unsigned 16-bit word. *)
+
+val enum_i16 : input -> int Enum.t
+(** Read a signed 16-bit word. *)
+
+val enum_i32 : input -> int Enum.t
+(** Read a signed 32-bit integer. Raise [Overflow] if the
+  read integer cannot be represented as a Caml 31-bit integer. *)
+val enum_real_i32 : input -> int32 Enum.t
+(** Read a signed 32-bit integer as an OCaml int32. *)
+
+val enum_i64 : input -> int64 Enum.t
+(** Read a signed 64-bit integer as an OCaml int64. *)
+
+val enum_double : input -> float Enum.t
+(** Read an IEEE double precision floating point value. *)
+
+val enum_string : input -> string Enum.t
+(** Read a null-terminated string. *)
+
+val enum_line : input -> string Enum.t
+(** Read a LF or CRLF terminated string. *)
+
+val enum_bits : in_bits -> int Enum.t
+(** Read an enumeration of bits *)
+
+val write_byte_enum : 'a output -> int Enum.t -> unit
+(** Write an enumeration of unsigned 8-bit bytes. *)
+
+val write_ui16_enum : 'a output -> int Enum.t -> unit
+(** Write an enumeration of unsigned 16-bit words. *)
+
+val write_i16_enum : 'a output -> int Enum.t -> unit
+(** Write an enumeration of signed 16-bit words. *)
+
+val write_i32_enum : 'a output -> int Enum.t -> unit
+(** Write an enumeration of signed 32-bit integers. *) 
+
+val write_real_i32_enum : 'a output -> int32 Enum.t -> unit
+(** Write an enumeration of OCaml int32s. *)
+
+val write_i64_enum : 'a output -> int64 Enum.t -> unit
+(** Write an enumeration of OCaml int64s. *)
+
+val write_double_enum : 'a output -> float Enum.t -> unit
+(** Write an enumeration of IEEE double precision floating point value. *)
+
+val write_string_enum : 'a output -> string Enum.t -> unit
+(** Write an enumeration of strings, appending null characters. *)
+
+val write_line_enum : 'a output -> string Enum.t -> unit
+(** Write an enumeration of lines, appending a LF (it might be converted
+    to CRLF on some systems depending on the underlying IO). *)
+
+val write_bits_enum : nbits:int -> out_bits -> int Enum.t -> unit
+(** Write an enumeration of bits*)

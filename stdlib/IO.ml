@@ -35,6 +35,13 @@ exception No_more_input
 exception Input_closed
 exception Output_closed
 
+(** [apply_enum f x] applies [f] to [x] and converts exceptions
+    [No_more_input] and [Input_closed] to [Enum.No_more_elements]*)
+let apply_enum f x =
+  try f x
+  with No_more_input 
+    |  Input_closed  -> raise Enum.No_more_elements
+
 (* -------------------------------------------------------------- *)
 (* API *)
 
@@ -469,6 +476,22 @@ let read_i64 ch =
 let read_double ch =
 	Int64.float_of_bits (read_i64 ch)
 
+let enum_ui16 input = Enum.from (fun () -> apply_enum read_ui16 input)
+
+let enum_i16 input = Enum.from (fun () -> apply_enum read_i16 input)
+
+let enum_i32 input = Enum.from (fun () -> apply_enum read_i32 input)
+
+let enum_real_i32 input = Enum.from (fun () -> apply_enum read_real_i32 input)
+
+let enum_i64 input = Enum.from (fun () -> apply_enum read_i64 input)
+
+let enum_double input = Enum.from (fun () -> apply_enum read_double input)
+
+let enum_string input = Enum.from (fun () -> apply_enum read_string input)
+
+let enum_line input = Enum.from (fun () -> apply_enum read_line input)
+
 let write_byte o n =
 	(* doesn't test bounds of n in order to keep semantics of Pervasives.output_byte *)
 	write o (Char.unsafe_chr (n land 0xFF))
@@ -513,6 +536,33 @@ let write_i64 ch n =
 
 let write_double ch f =
 	write_i64 ch (Int64.bits_of_float f)
+
+let write_byte_enum output enum =
+  Enum.iter (write_byte output) enum
+
+let write_ui16_enum output enum =
+  Enum.iter (write_ui16 output) enum
+
+let write_i16_enum output enum =
+  Enum.iter (write_i16 output) enum
+
+let write_i32_enum output enum =
+  Enum.iter (write_i32 output) enum
+
+let write_real_i32_enum output enum =
+  Enum.iter (write_real_i32 output) enum
+
+let write_i64_enum output enum =
+  Enum.iter (write_i64 output) enum
+
+let write_double_enum output enum =
+  Enum.iter (write_double output) enum
+
+let write_string_enum output enum =
+  Enum.iter (write_string output) enum
+
+let write_line_enum output enum =
+  Enum.iter (write_line output) enum
 
 (* -------------------------------------------------------------- *)
 (* Big Endians *)
@@ -789,3 +839,13 @@ let input_fields ch l =
     else String.sub b 0 l1
   in
   Enum.from get_field
+
+let enum_byte input = Enum.from (fun () -> apply_enum read_byte input)
+
+let enum_signed_byte input = Enum.from (fun () -> apply_enum read_signed_byte input)
+
+let enum_bits in_bits = Enum.from (fun () -> apply_enum read_bits in_bits 1)
+
+let write_bits_enum ~nbits output enum =
+  Enum.iter (write_bits ~nbits output) enum
+
