@@ -62,15 +62,22 @@ let empty() =
 let int_size = 7 (* value used to round up index *)
 let log_int_size = 3 (* number of shifts *)
 
+let length t = t.len
+
+let make n def =
+  if n < 0 then error "make";
+  let size = (n + int_size) lsr log_int_size in
+  let b = bcreate size in
+  let fill_byte = if def then 255 else 0 in
+  bfill b 0 size fill_byte;
+  {
+    data = b;
+    len = size;
+  }
+  
 let create n =
-	if n < 0 then error "create";
-	let size = (n+int_size) lsr log_int_size in
-	let b = bcreate size in
-	bfill b 0 size 0;
-	{
-		data = b;
-		len = size;
-	}
+  if n < 0 then error "create";
+  make n false
 
 let copy t =
 	let b = bcreate t.len in
@@ -126,6 +133,15 @@ let is_set t x =
 	fast_bool (((bget t.data pos) lsr delta) land 1)
   else
 	false
+
+let is_set_int t x = 
+  if x < 0 then error "is_set_int";
+  let pos = x lsr log_int_size and delta = x land int_size in
+  let size = t.len in
+  if pos < size then
+	((bget t.data pos) lsr delta) land 1
+  else
+	0
 
 
 exception Break_int of int

@@ -333,7 +333,17 @@ let rec fold f a = function
   | Concat(l,_,r,_,_) -> fold f (fold f a l) r
 
 
-let of_latin1 s = of_ustring (CharEncoding.recode_string CharEncoding.latin1 CharEncoding.utf8 s)
+
+module CE = CharEncoding.Configure(
+  struct 
+    let datadir = "/usr/local/share/camomile/database"
+    let localedir = "/usr/local/share/camomile/locales"
+    let charmapdir = "/usr/local/share/camomile/charmaps"
+    let unimapdir = "/usr/local/share/camomile/mappings"
+  end)
+
+let of_latin1 s = 
+  of_ustring (UTF8.of_string (CE.recode_string CE.latin1 CE.utf8 s))
 
 
 (* =end *)

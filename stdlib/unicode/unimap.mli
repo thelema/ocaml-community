@@ -24,4 +24,4 @@ val ucs_to_enc : t -> int -> int
 val of_name : string -> t
 end
 
-(* module Make (Config : ConfigInt.Type) : Type *)
+module Make (Config : ConfigInt.Type) : Type

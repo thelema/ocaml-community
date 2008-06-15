@@ -114,7 +114,7 @@ val ustream_of : t -> char Stream.t -> UChar.t Stream.t
 (** [char_stream_of enc uchars] converts the Unicode character stream 
    [uchars] to the byte stream by the encoding [enc] *)
 val char_stream_of : t -> UChar.t Stream.t -> char Stream.t
-
+*)
 module type Type =
   sig
     type text
@@ -130,9 +130,9 @@ module type Type =
 
 module Make (Text : UnicodeString.Type) : (Type with type text = Text.t)
 
-*)
+
 end
 
-(*
+
 module Configure (Config : ConfigInt.Type) : Interface
-*)
+

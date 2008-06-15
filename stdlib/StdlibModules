@@ -6,6 +6,7 @@ STDLIB_MODULES=\
   arg \
   array \
   arrayLabels \
+  avlTree \
   bitSet \
   buffer \
   callback \
@@ -20,8 +21,11 @@ STDLIB_MODULES=\
   gc \
   genlex \
   hashtbl \
+  iMap \
   int32 \
   int64 \
+  IO \
+  iSet \
   lazy \
   lexing \
   list \
@@ -38,6 +42,8 @@ STDLIB_MODULES=\
   printf \
   queue \
   random \
+  ref \
+  rope \
   scanf \
   set \
   sort \
@@ -48,4 +54,13 @@ STDLIB_MODULES=\
   stringLabels \
   sys \
   typestruct \
-  weak
+  uChar \
+  uTF8 \
+  vect \
+  weak \
+  unicode/byte_labeled_dag \
+  bytesvect \
+  unicode/tbl31 \
+  unicode/unimap \
+  unicode/charmap \
+  unicode/charEncoding

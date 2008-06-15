@@ -23,4 +23,4 @@ type data = Alias of string | CMap of t
 val of_name : string -> t
 end
 
-(* module Configure(Config : ConfigInt.Type) : Interface *)
+module Configure(Config : ConfigInt.Type) : Interface

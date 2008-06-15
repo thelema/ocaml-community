@@ -37,9 +37,13 @@ OTHERS=lazy.cmo ref.cmo char.cmo queue.cmo enum.cmo bitSet.cmo \
   digest.cmo random.cmo callback.cmo \
   camlinternalOO.cmo oo.cmo camlinternalMod.cmo \
   genlex.cmo weak.cmo typestruct.cmo \
+  uChar.cmo uTF8.cmo \
+  filename.cmo \
+  bytesvect.cmo unicode/byte_labeled_dag.cmo \
+  unicode/tbl31.cmo unicode/unimap.cmo unicode/charmap.cmo \
   unicode/charEncoding.cmo \
-  uChar.cmo uTF8.cmo rope.cmo \
-  filename.cmo complex.cmo IO.cmo \
+  rope.cmo \
+  complex.cmo IO.cmo \
   arrayLabels.cmo listLabels.cmo stringLabels.cmo moreLabels.cmo stdLabels.cmo
 
 all: stdlib.cma std_exit.cmo camlheader camlheader_ur
@@ -96,9 +100,6 @@ camlheader camlheader_ur: header.c ../config/Makefile
 
 sys.ml: sys.mlp ../VERSION
 	sed -e "s|%%VERSION%%|`head -1 ../VERSION`|" sys.mlp >sys.ml
-
-rope.cmo: rope.ml
-	$(CAMLC) $(COMPFLAGS) -I . -c rope.ml
 
 clean::
 	rm -f sys.ml

@@ -13,6 +13,7 @@ parsing.cmi: obj.cmi lexing.cmi
 printf.cmi: obj.cmi buffer.cmi 
 random.cmi: nativeint.cmi int64.cmi int32.cmi 
 rope.cmi: uTF8.cmi uChar.cmi 
+string.cmi: enum.cmi 
 uTF8.cmi: uChar.cmi enum.cmi 
 weak.cmi: hashtbl.cmi 
 IO.cmo: string.cmi pervasives.cmi list.cmi int64.cmi int32.cmi enum.cmi \
@@ -31,6 +32,8 @@ bitSet.cmo: enum.cmi bitSet.cmi
 bitSet.cmx: enum.cmx bitSet.cmi 
 buffer.cmo: sys.cmi string.cmi buffer.cmi 
 buffer.cmx: sys.cmx string.cmx buffer.cmi 
+bytesvect.cmo: string.cmi char.cmi bytesvect.cmi 
+bytesvect.cmx: string.cmx char.cmx bytesvect.cmi 
 callback.cmo: obj.cmi callback.cmi 
 callback.cmx: obj.cmx callback.cmi 
 camlinternalMod.cmo: obj.cmi camlinternalOO.cmi array.cmi camlinternalMod.cmi 
@@ -123,8 +126,8 @@ stdLabels.cmo: stringLabels.cmi listLabels.cmi arrayLabels.cmi stdLabels.cmi
 stdLabels.cmx: stringLabels.cmx listLabels.cmx arrayLabels.cmx stdLabels.cmi 
 stream.cmo: string.cmi obj.cmi list.cmi stream.cmi 
 stream.cmx: string.cmx obj.cmx list.cmx stream.cmi 
-string.cmo: pervasives.cmi list.cmi char.cmi string.cmi 
-string.cmx: pervasives.cmx list.cmx char.cmx string.cmi 
+string.cmo: pervasives.cmi list.cmi enum.cmi char.cmi string.cmi 
+string.cmx: pervasives.cmx list.cmx enum.cmx char.cmx string.cmi 
 stringLabels.cmo: string.cmi stringLabels.cmi 
 stringLabels.cmx: string.cmx stringLabels.cmi 
 sys.cmo: sys.cmi 
@@ -141,26 +144,32 @@ vect.cmo: array.cmi vect.cmi
 vect.cmx: array.cmx vect.cmi 
 weak.cmo: sys.cmi obj.cmi hashtbl.cmi array.cmi weak.cmi 
 weak.cmx: sys.cmx obj.cmx hashtbl.cmx array.cmx weak.cmi 
-unicode/charmap.cmi: unicode/tbl31.cmi 
+unicode/charEncoding.cmi: unicode/unicodeString.cmi unicode/configInt.cmi 
+unicode/charmap.cmi: unicode/tbl31.cmi unicode/configInt.cmi 
 unicode/tbl31.cmi: iSet.cmi iMap.cmi hashtbl.cmi 
 unicode/unicodeString.cmi: uChar.cmi 
+unicode/unimap.cmi: unicode/configInt.cmi 
+unicode/byte_labeled_dag.cmo: string.cmi pervasives.cmi list.cmi char.cmi \
+    bytesvect.cmi array.cmi unicode/byte_labeled_dag.cmi 
+unicode/byte_labeled_dag.cmx: string.cmx pervasives.cmx list.cmx char.cmx \
+    bytesvect.cmx array.cmx unicode/byte_labeled_dag.cmi 
 unicode/charEncoding.cmo: weak.cmi unicode/unimap.cmi \
-    unicode/unicodeString.cmi uChar.cmi unicode/tbl31.cmi string.cmi \
-    stream.cmi queue.cmi list.cmi hashtbl.cmi unicode/charmap.cmi char.cmi \
-    buffer.cmi unicode/charEncoding.cmi 
+    unicode/unicodeString.cmi uChar.cmi unicode/tbl31.cmi string.cmi list.cmi \
+    hashtbl.cmi unicode/configInt.cmi unicode/charmap.cmi char.cmi buffer.cmi \
+    unicode/charEncoding.cmi 
 unicode/charEncoding.cmx: weak.cmx unicode/unimap.cmx \
-    unicode/unicodeString.cmi uChar.cmx unicode/tbl31.cmx string.cmx \
-    stream.cmx queue.cmx list.cmx hashtbl.cmx unicode/charmap.cmx char.cmx \
-    buffer.cmx unicode/charEncoding.cmi 
+    unicode/unicodeString.cmi uChar.cmx unicode/tbl31.cmx string.cmx list.cmx \
+    hashtbl.cmx unicode/configInt.cmi unicode/charmap.cmx char.cmx buffer.cmx \
+    unicode/charEncoding.cmi 
 unicode/charmap.cmo: weak.cmi unicode/tbl31.cmi hashtbl.cmi filename.cmi \
-    unicode/charmap.cmi 
+    unicode/configInt.cmi unicode/byte_labeled_dag.cmi unicode/charmap.cmi 
 unicode/charmap.cmx: weak.cmx unicode/tbl31.cmx hashtbl.cmx filename.cmx \
-    unicode/charmap.cmi 
+    unicode/configInt.cmi unicode/byte_labeled_dag.cmx unicode/charmap.cmi 
 unicode/tbl31.cmo: weak.cmi sys.cmi string.cmi iSet.cmi iMap.cmi hashtbl.cmi \
-    char.cmi avlTree.cmi array.cmi unicode/tbl31.cmi 
+    char.cmi bytesvect.cmi bitSet.cmi avlTree.cmi array.cmi unicode/tbl31.cmi 
 unicode/tbl31.cmx: weak.cmx sys.cmx string.cmx iSet.cmx iMap.cmx hashtbl.cmx \
-    char.cmx avlTree.cmx array.cmx unicode/tbl31.cmi 
+    char.cmx bytesvect.cmx bitSet.cmx avlTree.cmx array.cmx unicode/tbl31.cmi 
 unicode/unimap.cmo: weak.cmi unicode/tbl31.cmi iMap.cmi hashtbl.cmi \
-    filename.cmi unicode/unimap.cmi 
+    filename.cmi unicode/configInt.cmi unicode/unimap.cmi 
 unicode/unimap.cmx: weak.cmx unicode/tbl31.cmx iMap.cmx hashtbl.cmx \
-    filename.cmx unicode/unimap.cmi 
+    filename.cmx unicode/configInt.cmi unicode/unimap.cmi 

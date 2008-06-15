@@ -104,7 +104,7 @@ class out_channel : t -> Pervasives.out_channel -> [UChar.t] obj_output_channel
    {!OOChannel.obj_input_channel} which
    reads bytes from [inchan] and converts them to Unicode characters. *)
 class in_channel : t -> Pervasives.in_channel -> [UChar.t] obj_input_channel
-*)
+
 (** [ustream_of enc chars] converts the byte stream [chars] 
    to the Unicode character stream by the encoding [enc]. *)
 val ustream_of : t -> char Stream.t -> UChar.t Stream.t
@@ -112,6 +112,7 @@ val ustream_of : t -> char Stream.t -> UChar.t Stream.t
 (** [char_stream_of enc uchars] converts the Unicode character stream 
    [uchars] to the byte stream by the encoding [enc] *)
 val char_stream_of : t -> UChar.t Stream.t -> char Stream.t
+*)
 
 module type Type =
   sig
@@ -132,7 +133,7 @@ end
 module Configure (Config : ConfigInt.Type) = struct
 module Unimap = Unimap.Make(Config)
 module Charmap = Charmap.Configure(Config)
-open OOChannel
+(*open OOChannel*)
 
 let rec comp_sub_aux s1 i1 s2 i2 len =
   if len <= 0 then true else
@@ -294,7 +295,7 @@ let recode_string ~in_enc ~out_enc s =
   feed_string reader s;
   reader.term ();
   Buffer.contents buf
-
+(*
 let char_machine_of outchan =
   let b = String.make 1024 '\000' in
   let pos = ref 0 in
@@ -445,7 +446,7 @@ class in_char_channel_from_ustream enc us =
 
 let char_stream_of enc us = 
   stream_of_channel (new in_char_channel_from_ustream enc us)
-
+*)
 module type Type =
   sig
     type text

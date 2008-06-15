@@ -1,6 +1,13 @@
 (* $Id: tbl31.ml,v 1.13 2003/07/31 12:21:16 yori Exp $ *)
 (* Copyright 2002, 2003 Yamagata Yoriyuki. distributed with LGPL *)
 
+module Bitsvect = struct
+  include BitSet
+(*  let make d = make (if d=0 then false else true)*)
+  let get = is_set_int
+  let set t i v = put t (if v=0 then false else true) i
+end
+
 (* CRC-hash, algorithm comes from addnode.c/pathalias *)
 (* 31-bits CRC-polynomial, by Andrew Appel*)
 let poly = 0x48000000
@@ -28,6 +35,7 @@ let (lsl) x n =
   if n <= ~- Sys.word_size then 0 else
   if n < 0 then x lsr (~-n) else
   x lsl n
+
 
 let byte st n =
   match st with
@@ -406,7 +414,7 @@ module BitsLeaf = struct
       Pool.add pool x;
       x
 
-  let make_raw = Bitsvect.make 256
+  let make_raw d = Bitsvect.make 256 (d!=0)
   let make def = hashcons (make_raw def)
 
   let of_map n0 def m =
@@ -430,7 +438,7 @@ module Bits = struct
     let lev = Array.unsafe_get tbl (byte3 n) in
     let lev = Array.unsafe_get lev (byte2 n) in
     let lev = Array.unsafe_get lev (byte1 n) in
-    Bitsvect.unsafe_get lev (byte0 n)
+    Bitsvect.get lev (byte0 n)
 end
 
 module BytesContentsHash = struct

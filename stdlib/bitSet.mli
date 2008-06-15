@@ -37,6 +37,12 @@ val empty : unit ->  t
 val create : int -> t
 (** Create an empty bitset with an initial size (in number of bits). *)
 
+val make : int -> bool -> t
+(** [make s def] returns a new bitset with all bits set to [def] and size [s] *)
+
+val length : t -> int
+(** Returns the langth of a bitset *)
+
 val copy : t -> t
 (** Copy a bitset : further modifications of first one will not affect the
  copy. *)
@@ -59,6 +65,10 @@ val toggle : t -> int -> unit
 val is_set : t -> int -> bool
 (** [is_set s n] returns true if nth-bit in the bitset [s] is set,
  or false otherwise. *)
+
+val is_set_int : t -> int -> int
+(** [is_set s n] returns 1 if nth-bit in the bitset [s] is set,
+ or 0 otherwise. *)
 
 val compare : t -> t -> int
 (** [compare s1 s2] compares two bitsets. Highest bit indexes are
